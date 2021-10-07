@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interface\**" />
+    <Compile Remove="Logic\**" />
+    <Content Remove="Interface\**" />
+    <Content Remove="Logic\**" />
+    <EmbeddedResource Remove="Interface\**" />
+    <EmbeddedResource Remove="Logic\**" />
+    <None Remove="Interface\**" />
+    <None Remove="Logic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 
