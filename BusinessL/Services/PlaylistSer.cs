@@ -1,25 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DataL;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessL.Services
 {
     class PlaylistSer
     {
-        public bool add_to_playlist(string author, string path, string genre, TimeSpan time_to_play)
-        {//add song to playlist
+        public PlaylistSer() { pctx = new PlaylistContext(); }
+        public PlaylistContext pctx { get; set; }
+        public bool CreateNewPlaylist(User user, string login, string name)
+        {
+            if (pctx.Playlists.FirstOrDefault(playlist => playlist.Name == name && playlist.User.Login == login) == null)
+            {
+                pctx.Playlists.Add(new Playlist { Name = name, User = user });
+                pctx.SaveChanges();
+                return true;
+            }
+            else
+                return true;
+        }
+        public bool RenamePlaylist(string login, string oldName, string newName)
+        {
+            if (pctx.Playlists.FirstOrDefault(playlist => playlist.Name == newName && playlist.User.Login == login) == null)
+            {
+                Playlist playlist_ = pctx.Playlists.FirstOrDefault(playlist => playlist.Name == oldName);
+                playlist_.Name = newName;
+                pctx.Playlists.Update(playlist_);
+                pctx.SaveChanges();
+                return true;
+            }
+            else return false;
+
+        }
+        public bool DeletePlaylist(string login, string name)
+        {
+            Playlist playlist_ = pctx.Playlists.FirstOrDefault(playlist => playlist.Name == name && playlist.User.Login == login);
+            pctx.Playlists.Remove(playlist_);
+            pctx.SaveChanges();
             return false;
         }
-        public bool remove_from_playlist(int delete_song)
-        {//remove where song is
-            return false;
-        }
-        public bool rename_playlist(string new_name)
-        {//rename playlist
-            return false;
-        }
-        //try to mashup and sort songs in playlist
     }
 }
