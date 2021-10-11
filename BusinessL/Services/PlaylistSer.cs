@@ -1,12 +1,13 @@
 ﻿using DataL;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BusinessL.Services
 {
     class PlaylistSer
     {
-        public PlaylistSer() { pctx = new PlaylistContext(); }
-        public PlaylistContext pctx { get; set; }
+        public PlaylistSer() { pctx = new MusicContext(); }
+        public MusicContext pctx { get; set; }
         public bool CreateNewPlaylist(User user, string login, string name)
         {
             if (pctx.Playlists.FirstOrDefault(playlist => playlist.Name == name && playlist.User.Login == login) == null)
@@ -37,6 +38,10 @@ namespace BusinessL.Services
             pctx.Playlists.Remove(playlist_);
             pctx.SaveChanges();
             return false;
+        }
+        public void PrintAllPlaylists(int id)
+        {
+            List<Playlist> playlistsUser = pctx.Playlists.Where(playlist => playlist.UserId == id).ToList();
         }
     }
 }

@@ -5,8 +5,8 @@ namespace BusinessL.Services
 {
     class UserSer
     {
-        public UserSer() { uctx = new UsersContext(); }
-        public UsersContext uctx { get; set; }
+        public UserSer() { uctx = new MusicContext(); }
+        public MusicContext uctx { get; set; }
         public bool CreateNewUser(string login, string passwd)
         {
             if (uctx.Users.FirstOrDefault(user => user.Login == login) == null)

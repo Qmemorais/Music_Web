@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace DataL
 {
-    public class PlaylistContext : DbContext
+    public class MusicContext : DbContext
     {
+        public DbSet<Song> Songs { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
-        public PlaylistContext()
+        public DbSet<User> Users { get; set; }
+        public MusicContext()
         {
             Database.EnsureCreated();
         }

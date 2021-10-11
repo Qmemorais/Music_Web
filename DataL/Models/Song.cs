@@ -13,7 +13,7 @@ namespace DataL
         public string Path { get; set; }
         public string Author { get; set; }
         public string Time { get; set; }
-        public int PlaylistName { get; set; }
+        public int PlaylistId { get; set; }
         public Playlist Playlist { get; set; }
 
     }
