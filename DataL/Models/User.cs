@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataL
+namespace DataL.Models
 {
     public class User
     {
         public int Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        //public List<Playlist> Playlists { get; set; }
+       // public string Krakazabra { get; set; }
     }
 }
