@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web_Music", "Web_Music\Web_Music.csproj", "{6DEB2230-C918-44F7-A6B8-6DC12CF0362E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataL", "DataL\DataL.csproj", "{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataL\DataLayer.csproj", "{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessL", "BusinessL\BusinessL.csproj", "{E6A40BC9-0CD3-41FD-9CDB-2710A2032429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayer", "BusinessL\BusinessLayer.csproj", "{E6A40BC9-0CD3-41FD-9CDB-2710A2032429}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

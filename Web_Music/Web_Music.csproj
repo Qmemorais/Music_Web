@@ -16,11 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BusinessL\BusinessL.csproj" />
+    <ProjectReference Include="..\BusinessL\BusinessLayer.csproj" />
   </ItemGroup>
 
 </Project>

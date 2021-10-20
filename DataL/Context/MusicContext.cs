@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DataL.Models;
+using DataLayer.Models;
 
-namespace DataL.Context
+namespace DataLayer.Context
 {
     public class MusicContext : DbContext
     {
