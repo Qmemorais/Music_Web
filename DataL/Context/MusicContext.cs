@@ -16,5 +16,10 @@ namespace DataLayer.Context
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicAPIdb;Trusted_Connection=True;");
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // использование Fluent API
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

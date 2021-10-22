@@ -5,35 +5,41 @@ using System.Collections.Generic;
 
 namespace DataLayer.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private MusicContext db;
+        MusicContext db;
+        DbSet<TEntity> dbSet;
 
         public GenericRepository(MusicContext context)
         {
             this.db = context;
+            this.dbSet = context.Set<TEntity>();
         }
 
-        public T Get(int id)
+        public void Create(TEntity entity)
         {
-            return db.Find<T>(id);
+            dbSet.Add(entity);
         }
 
-        public void Create(T item)
+        public void Delete(TEntity entity)
         {
-            db.Add(item);
+            dbSet.Remove(entity);
         }
 
-        public void Update(T item)
+        public TEntity Get(int id)
         {
-            db.Entry(item).State = EntityState.Modified;
+            return dbSet.Find(id);
         }
 
-        public void Delete(int id)
+        public IEnumerable<TEntity> GetAll()
         {
-            T item = db.Find<T>(id);
-            if (item != null)
-                db.Remove(item);
+            return dbSet;
+        }
+
+        public void Update(TEntity entity)
+        {
+            dbSet.Update(entity);
+            db.Entry(entity).State = EntityState.Modified;
         }
     }
 }

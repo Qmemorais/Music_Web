@@ -1,11 +1,13 @@
-﻿using System;
+﻿using DataLayer.Models;
+using System;
 
 namespace DataLayer.Repository.Interface
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork: IDisposable
     {
-        IGenericRepository<object> Generic { get; }
-        IGetListRepository<object> GetList { get; }
+        IGenericRepository<User> User { get; }
+        IGenericRepository<Song> Song { get; }
+        IGenericRepository<Playlist> Playlist { get; }
         void Save();
     }
 }

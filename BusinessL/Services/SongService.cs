@@ -1,41 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataLayer.Context;
+using BusinessLayer.Services.Interface;
 using DataLayer.Models;
+using DataLayer.Repository.Interface;
 
 namespace BusinessLayer.Services
 {
-    public class SongService
+    public class SongService : ISongService
     {
-        public SongService() { sctx = new MusicContext(); }
-        public MusicContext sctx { get; set; }
-        public bool AddNewSong(int id, string pathMP3 )
+        private readonly IUnitOfWork _unitOfWork;
+        public SongService(IUnitOfWork unitOfWork)
         {
-            if(sctx.Songs.FirstOrDefault(song => song.PlaylistId==id)!=null)
-            {
-                TagLib.File tfile = TagLib.File.Create(pathMP3);
-                string title = tfile.Tag.Title;
-                string author = String.Join(", ", tfile.Tag.Performers);
-                string duration = tfile.Properties.Duration.ToString("mm\\:ss");
-                sctx.Songs.Add(new Song { PlaylistId = id, Path = pathMP3, Name = title, Author = author, Time = duration });
-                sctx.SaveChanges();
-                return true;
-            }
-            else
-                return false;
+            _unitOfWork = unitOfWork;
         }
-        public bool DeleteSong(int id, int idSong)
+        public bool Create(int id, string pathFile)
         {
-            Song deleteSong = sctx.Songs.FirstOrDefault(song => song.PlaylistId == id && song.Id == idSong);
-            sctx.Songs.Remove(deleteSong);
-            sctx.SaveChanges();
+            TagLib.File tfile = TagLib.File.Create(pathFile);
+            string title = tfile.Tag.Title;
+            string author = String.Join(", ", tfile.Tag.Performers);
+            string duration = tfile.Properties.Duration.ToString("mm\\:ss");
+            _unitOfWork.Song.Create(new Song
+            {
+                Name = title ?? "no name",
+                Author = author ?? "no name",
+                Time = duration,
+                PlaylistId = id
+            });
+            _unitOfWork.Save();
             return true;
         }
-        public List<Song> PrintAllSongsInPlaylist(int id)
+
+        public bool Delete(int id)
         {
-            List<Song> songPlaylist = sctx.Songs.Where(song => song.PlaylistId==id).ToList();
-            return songPlaylist;
+            _unitOfWork.Song.Delete(_unitOfWork.Song.Get(id));
+            _unitOfWork.Save();
+            return true;
+        }
+
+        public IEnumerable<Song> GetAll(int id)
+        {
+            return _unitOfWork.Song.GetAll().Where(song => song.PlaylistId == id);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DataLayer.Context;
+using DataLayer.Models;
 using DataLayer.Repository.Interface;
 using System;
 
@@ -7,16 +8,19 @@ namespace DataLayer.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly MusicContext db;
-        public IGenericRepository<object> Generic { get; }
-        public IUserRepository<object> User { get; }
+        public IGenericRepository<User> User { get; }
+        public IGenericRepository<Song> Song { get; }
+        public IGenericRepository<Playlist> Playlist { get; }
         public UnitOfWork(MusicContext _context,
-                    IGenericRepository<object> generic,
-                    IUserRepository<object> user)
+                    IGenericRepository<User> user,
+                    IGenericRepository<Song> song,
+                    IGenericRepository<Playlist> playlist)
         {
             this.db = _context;
 
-            this.Generic = generic;
             this.User = user;
+            this.Song = song;
+            this.Playlist = playlist;
         }
 
         public void Save()
