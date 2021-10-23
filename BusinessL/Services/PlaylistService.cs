@@ -32,9 +32,12 @@ namespace BusinessLayer.Services
             return true;
         }
 
-        public IEnumerable<Playlist> GetAll(int id)
+        public IEnumerable<string> GetAll(int id)
         {
-            return _unitOfWork.Playlist.GetAll().Where(playlist => playlist.UserId == id);
+            List<string> names = new List<string>();
+            foreach (Playlist playlist in _unitOfWork.Playlist.GetAll().Where(playlist => playlist.UserId == id))
+                names.Add(playlist.Name);
+            return names;
         }
 
         public bool Rename(int id, string newName)

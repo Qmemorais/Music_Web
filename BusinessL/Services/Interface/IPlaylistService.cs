@@ -7,7 +7,7 @@ namespace BusinessLayer.Services.Interface
     {
         bool Create(int id, string name);
         bool Delete(int id);
-        IEnumerable<Playlist> GetAll(int id);
+        IEnumerable<string> GetAll(int id);
         bool Rename(int id, string newName);
         //bool Share(int id,int idNewUser);
     }
