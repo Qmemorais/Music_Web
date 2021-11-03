@@ -1,6 +1,6 @@
 ﻿using BusinessLayer.Services.Interface;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,39 +14,37 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public bool Create(int id, string name)
+        public void Create(Playlist PlaylistToCreate)
         {
-            if (_unitOfWork.Playlist.GetAll().Where(playlist => playlist.Name == name) == null)
+            var GetPlaylist = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == PlaylistToCreate.Name
+            && playlist.UserId == PlaylistToCreate.UserId);
+            if (GetPlaylist==false)
             {
-                _unitOfWork.Playlist.Create(new Playlist { Name = name, UserId=id });
+                _unitOfWork.Playlists.Create(PlaylistToCreate);
                 _unitOfWork.Save();
-                return true;
             }
-            return false;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
-            _unitOfWork.Playlist.Delete(_unitOfWork.Playlist.Get(id));
+            _unitOfWork.Playlists.Delete(id);
             _unitOfWork.Save();
-            return true;
         }
 
-        public IEnumerable<string> GetAll(int id)
+        public IEnumerable<Playlist> GetAll(int id)
         {
-            List<string> names = new List<string>();
-            foreach (Playlist playlist in _unitOfWork.Playlist.GetAll().Where(playlist => playlist.UserId == id))
-                names.Add(playlist.Name);
-            return names;
+            return _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
         }
 
-        public bool Rename(int id, string newName)
+        public Playlist GetPlaylist(int id)
         {
-            Playlist playlist = _unitOfWork.Playlist.Get(id);
-            playlist.Name = newName;
-            _unitOfWork.Playlist.Update(playlist);
+            return _unitOfWork.Playlists.Get(id);
+        }
+
+        public void Update(Playlist PlaylistToUpdate)
+        {
+            _unitOfWork.Playlists.Update(PlaylistToUpdate);
             _unitOfWork.Save();
-            return true;
         }
 
         //public bool Share(int id,int idNewUser){}

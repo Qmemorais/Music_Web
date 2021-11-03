@@ -1,45 +1,41 @@
 ﻿using DataLayer.Context;
-using DataLayer.Repository.Interface;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace DataLayer.Repository
 {
     class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        MusicContext db;
-        DbSet<TEntity> dbSet;
+        readonly MusicContext db;
 
         public GenericRepository(MusicContext context)
         {
-            this.db = context;
-            this.dbSet = context.Set<TEntity>();
+            db = context;
         }
 
         public void Create(TEntity entity)
         {
-            dbSet.Add(entity);
+            db.Set<TEntity>().Add(entity);
         }
 
-        public void Delete(TEntity entity)
+        public void Delete(int id)
         {
-            dbSet.Remove(entity);
+            var entity = Get(id);
+            db.Set<TEntity>().Remove(entity);
         }
 
         public TEntity Get(int id)
         {
-            return dbSet.Find(id);
+            return db.Set<TEntity>().Find(id);
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            return dbSet;
+            return db.Set<TEntity>();
         }
 
         public void Update(TEntity entity)
         {
-            dbSet.Update(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            db.Set<TEntity>().Update(entity);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Services.Interface;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.UnitOfWork;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BusinessLayer.Services
@@ -12,52 +13,36 @@ namespace BusinessLayer.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public bool Create(int id, string email, string name = "", string surname = "")
+        public void Create(User UserToCreate)
         {
-            if(_unitOfWork.User.GetAll().Where(user => user.Email == email) == null)
+            var AnyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == UserToCreate.Email);
+            if (AnyUser.Equals(false))
             {
-                _unitOfWork.User.Create(new User { Email = email, Name = name, Surname = surname });
+                _unitOfWork.Users.Create(UserToCreate);
                 _unitOfWork.Save();
-                return true;
             }
-            return false;
         }
-        public bool Delete(int id)
+        public void Delete(int id)
         {
-            _unitOfWork.User.Delete(_unitOfWork.User.Get(id));
+            _unitOfWork.Users.Delete(id);
             _unitOfWork.Save();
-            return true;
         }
 
-        public bool Reemail(int id, string newEmail)
+        public IEnumerable<User> GetAllUser()
         {
-            if (_unitOfWork.User.GetAll().Where(user => user.Email == newEmail) == null)
-            {
-                User user = _unitOfWork.User.Get(id);
-                user.Email = newEmail;
-                _unitOfWork.User.Update(user);
-                _unitOfWork.Save();
-                return true;
-            }
-            return false;
+            return _unitOfWork.Users.GetAll();
         }
 
-        public bool Rename(int id, string newName)
+        public User GetUser(int id)
         {
-            User user = _unitOfWork.User.Get(id);
-            user.Name = newName;
-            _unitOfWork.User.Update(user);
-            _unitOfWork.Save();
-            return true;
+            return _unitOfWork.Users.Get(id);
         }
 
-        public bool Resurname(int id, string newSurname)
+        public void Update(User UserToUpdate)
         {
-            User user = _unitOfWork.User.Get(id);
-            user.Surname = newSurname;
-            _unitOfWork.User.Update(user);
+            _unitOfWork.Users.Update(UserToUpdate);
             _unitOfWork.Save();
-            return true;
         }
+
     }
 }

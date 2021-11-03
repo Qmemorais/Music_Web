@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace DataLayer.Models
+﻿namespace DataLayer.Models
 {
     public class User
     {

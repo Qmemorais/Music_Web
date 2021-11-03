@@ -5,8 +5,8 @@ namespace BusinessLayer.Services.Interface
 {
     public interface ISongService
     {
-        bool Create(int id, string name);
-        bool Delete(int id);
-        IEnumerable<Song> GetAll(int id);
+        public void Create(Song SongToCreate);
+        public void Delete(int id);
+        public IEnumerable<Song> GetAll(int id);
     }
 }
