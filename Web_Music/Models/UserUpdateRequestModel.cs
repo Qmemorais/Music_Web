@@ -1,6 +1,6 @@
-﻿namespace DataLayer.Models
+﻿namespace Web_Music.Models
 {
-    public class User
+    public class UserUpdateRequestModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

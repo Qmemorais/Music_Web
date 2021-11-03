@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLayer.Services.Interface;
+using BusinessLayer.Models;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.UnitOfWork;
+using AutoMapper;
 
 namespace BusinessLayer.Services
 {
@@ -14,33 +16,28 @@ namespace BusinessLayer.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public bool Create(int id, string pathFile)
+        public void Create(SongCreateDto songToCreate)
         {
-            TagLib.File tfile = TagLib.File.Create(pathFile);
-            string title = tfile.Tag.Title;
-            string author = String.Join(", ", tfile.Tag.Performers);
-            string duration = tfile.Properties.Duration.ToString("mm\\:ss");
-            _unitOfWork.Song.Create(new Song
-            {
-                Name = title ?? "no name",
-                Author = author ?? "no name",
-                Time = duration,
-                PlaylistId = id
-            });
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<SongCreateDto, Song>());
+            var mapper = new Mapper(config);
+            Song CreateSong = mapper.Map<SongCreateDto, Song>(songToCreate);
+            _unitOfWork.Songs.Create(CreateSong);
             _unitOfWork.Save();
-            return true;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
-            _unitOfWork.Song.Delete(_unitOfWork.Song.Get(id));
+            _unitOfWork.Songs.Delete(id);
             _unitOfWork.Save();
-            return true;
         }
 
-        public IEnumerable<Song> GetAll(int id)
+        public IEnumerable<SongUpdateDto> GetAll(int id)
         {
-            return _unitOfWork.Song.GetAll().Where(song => song.PlaylistId == id);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Song, SongUpdateDto>());
+            var mapper = new Mapper(config);
+            var songFromDB = _unitOfWork.Songs.GetAll().Where(song => song.PlaylistId == id);
+            var songs = mapper.Map<List<SongUpdateDto>>(songFromDB);
+            return songs;
         }
     }
 }

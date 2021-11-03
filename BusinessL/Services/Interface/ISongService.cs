@@ -1,12 +1,13 @@
-﻿using DataLayer.Models;
+﻿using BusinessLayer.Models;
+using DataLayer.Models;
 using System.Collections.Generic;
 
 namespace BusinessLayer.Services.Interface
 {
     public interface ISongService
     {
-        bool Create(int id, string name);
-        bool Delete(int id);
-        IEnumerable<Song> GetAll(int id);
+        public void Create(SongCreateDto songToCreate);
+        public void Delete(int id);
+        public IEnumerable<SongUpdateDto> GetAll(int id);
     }
 }

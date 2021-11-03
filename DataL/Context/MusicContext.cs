@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DataLayer.Models;
+﻿using DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.Context
@@ -9,9 +8,9 @@ namespace DataLayer.Context
         public DbSet<Song> Songs { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<User> Users { get; set; }
-        public MusicContext()
-        {
-        }
+        public MusicContext(DbContextOptions<MusicContext> options)
+    : base(options)
+        { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -20,11 +19,11 @@ namespace DataLayer.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // использование Fluent API
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new PlaylistConfiguration());
-            modelBuilder.ApplyConfiguration(new SongConfiguration());
+           // modelBuilder.ApplyConfiguration(new UserConfiguration());
+           // modelBuilder.ApplyConfiguration(new PlaylistConfiguration());
+           // modelBuilder.ApplyConfiguration(new SongConfiguration());
         }
-        public class UserConfiguration : IEntityTypeConfiguration<User>
+        /*public class UserConfiguration : IEntityTypeConfiguration<User>
         {
             public void Configure(EntityTypeBuilder<User> builder)
             {
@@ -43,6 +42,6 @@ namespace DataLayer.Context
             public void Configure(EntityTypeBuilder<Song> builder)
             {
             }
-        }
+        }*/
     }
 }

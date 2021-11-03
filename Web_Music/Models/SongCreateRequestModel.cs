@@ -1,6 +1,6 @@
-﻿namespace DataLayer.Models
+﻿namespace Web_Music.Models
 {
-    public class Song
+    public class SongCreateRequestModel
     {
         public int Id { get; set; }
         public string Name { get ; set ; }
@@ -10,7 +10,7 @@
         public string Time { get; set; }
         //public string Genre { get; set; }
         public int PlaylistId { get; set; }
-        public Playlist Playlist { get; set; }
+        public PlaylistCreateRequestModel PlaylistCreateRequestModel { get; set; }
 
     }
 }

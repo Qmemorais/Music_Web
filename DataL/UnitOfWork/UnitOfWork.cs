@@ -1,44 +1,33 @@
 ﻿using DataLayer.Context;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.Repository;
 using System;
 
 namespace DataLayer.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly MusicContext db;
-        public IGenericRepository<User> User { get; }
-        public IGenericRepository<Song> Song { get; }
-        public IGenericRepository<Playlist> Playlist { get; }
-        public UnitOfWork(MusicContext _context,
-                    IGenericRepository<User> user,
-                    IGenericRepository<Song> song,
-                    IGenericRepository<Playlist> playlist)
+        private readonly MusicContext _db;
+        public IGenericRepository<User> User;
+        public IGenericRepository<Song> Song;
+        public IGenericRepository<Playlist> Playlist;
+        public UnitOfWork(MusicContext context)
         {
-            this.db = _context;
-
-            this.User = user;
-            this.Song = song;
-            this.Playlist = playlist;
+            _db = context;
         }
+
+        public IGenericRepository<User> Users => User ??= new GenericRepository<User>(_db);
+        public IGenericRepository<Song> Songs => Song ??= new GenericRepository<Song>(_db);
+        public IGenericRepository<Playlist> Playlists => Playlist ??= new GenericRepository<Playlist>(_db);
 
         public void Save()
         {
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            _db.Dispose();
         }
     }
 }

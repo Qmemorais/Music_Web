@@ -1,6 +1,9 @@
-﻿using BusinessLayer.Services.Interface;
+﻿using AutoMapper;
+using BusinessLayer.Models;
+using BusinessLayer.Services.Interface;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.UnitOfWork;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BusinessLayer.Services
@@ -12,52 +15,49 @@ namespace BusinessLayer.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public bool Create(int id, string email, string name = "", string surname = "")
+        public void Create(UserCreateDto userToCreate)
         {
-            if(_unitOfWork.User.GetAll().Where(user => user.Email == email) == null)
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<UserCreateDto,User>());
+            var mapper = new Mapper(config);
+            User CreateUser = mapper.Map<UserCreateDto, User>(userToCreate);
+            var anyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == CreateUser.Email);
+            if (anyUser.Equals(false))
             {
-                _unitOfWork.User.Create(new User { Email = email, Name = name, Surname = surname });
+                _unitOfWork.Users.Create(CreateUser);
                 _unitOfWork.Save();
-                return true;
             }
-            return false;
-        }
-        public bool Delete(int id)
-        {
-            _unitOfWork.User.Delete(_unitOfWork.User.Get(id));
-            _unitOfWork.Save();
-            return true;
         }
 
-        public bool Reemail(int id, string newEmail)
+        public void Delete(int id)
         {
-            if (_unitOfWork.User.GetAll().Where(user => user.Email == newEmail) == null)
-            {
-                User user = _unitOfWork.User.Get(id);
-                user.Email = newEmail;
-                _unitOfWork.User.Update(user);
-                _unitOfWork.Save();
-                return true;
-            }
-            return false;
+            _unitOfWork.Users.Delete(id);
+            _unitOfWork.Save();
         }
 
-        public bool Rename(int id, string newName)
+        public IEnumerable<UserUpdateDto> GetAllUser()
         {
-            User user = _unitOfWork.User.Get(id);
-            user.Name = newName;
-            _unitOfWork.User.Update(user);
-            _unitOfWork.Save();
-            return true;
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<User, UserUpdateDto>());
+            var mapper = new Mapper(config);
+            var users = mapper.Map<List<UserUpdateDto>>(_unitOfWork.Users.GetAll());
+            return users;
         }
 
-        public bool Resurname(int id, string newSurname)
+        public UserUpdateDto GetUser(int id)
         {
-            User user = _unitOfWork.User.Get(id);
-            user.Surname = newSurname;
-            _unitOfWork.User.Update(user);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<User, UserUpdateDto>());
+            var mapper = new Mapper(config);
+            var userFromDB = _unitOfWork.Users.Get(id);
+            var user = mapper.Map<UserUpdateDto>(userFromDB);
+            return user;
+        }
+
+        public void Update(UserUpdateDto userToUpdate)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<UserUpdateDto, User>());
+            var mapper = new Mapper(config);
+            User user = mapper.Map<UserUpdateDto, User>(userToUpdate);
+            _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
-            return true;
         }
     }
 }

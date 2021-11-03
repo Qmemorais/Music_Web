@@ -1,6 +1,8 @@
-﻿using BusinessLayer.Services.Interface;
+﻿using AutoMapper;
+using BusinessLayer.Models;
+using BusinessLayer.Services.Interface;
 using DataLayer.Models;
-using DataLayer.Repository.Interface;
+using DataLayer.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,39 +16,51 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public bool Create(int id, string name)
+        public void Create(PlaylistCreateDto playlistToCreate)
         {
-            if (_unitOfWork.Playlist.GetAll().Where(playlist => playlist.Name == name) == null)
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<PlaylistCreateDto, Playlist>());
+            var mapper = new Mapper(config);
+            Playlist PlaylistCreate = mapper.Map<PlaylistCreateDto, Playlist>(playlistToCreate);
+            var GetPlaylist = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == PlaylistCreate.Name
+            && playlist.UserId == PlaylistCreate.UserId);
+            if (GetPlaylist==false)
             {
-                _unitOfWork.Playlist.Create(new Playlist { Name = name, UserId=id });
+                _unitOfWork.Playlists.Create(PlaylistCreate);
                 _unitOfWork.Save();
-                return true;
             }
-            return false;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
-            _unitOfWork.Playlist.Delete(_unitOfWork.Playlist.Get(id));
+            _unitOfWork.Playlists.Delete(id);
             _unitOfWork.Save();
-            return true;
         }
 
-        public IEnumerable<string> GetAll(int id)
+        public IEnumerable<PlaylistUpdateDto> GetAll(int id)
         {
-            List<string> names = new List<string>();
-            foreach (Playlist playlist in _unitOfWork.Playlist.GetAll().Where(playlist => playlist.UserId == id))
-                names.Add(playlist.Name);
-            return names;
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Playlist, PlaylistUpdateDto>());
+            var mapper = new Mapper(config);
+            var playlistsFromDB = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
+            var playlist= mapper.Map<List<PlaylistUpdateDto>>(playlistsFromDB);
+            return playlist;
         }
 
-        public bool Rename(int id, string newName)
+        public PlaylistUpdateDto GetPlaylist(int id)
         {
-            Playlist playlist = _unitOfWork.Playlist.Get(id);
-            playlist.Name = newName;
-            _unitOfWork.Playlist.Update(playlist);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Playlist, PlaylistUpdateDto>());
+            var mapper = new Mapper(config);
+            var playlistFromDB = _unitOfWork.Playlists.Get(id);
+            var playlist = mapper.Map<PlaylistUpdateDto>(playlistFromDB);
+            return playlist;
+        }
+
+        public void Update(PlaylistUpdateDto playlistToUpdate)
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<PlaylistUpdateDto, Playlist>());
+            var mapper = new Mapper(config);
+            Playlist playlist = mapper.Map<PlaylistUpdateDto, Playlist>(playlistToUpdate);
+            _unitOfWork.Playlists.Update(playlist);
             _unitOfWork.Save();
-            return true;
         }
 
         //public bool Share(int id,int idNewUser){}

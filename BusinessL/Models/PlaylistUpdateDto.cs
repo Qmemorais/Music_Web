@@ -1,10 +1,10 @@
-﻿namespace DataLayer.Models
+﻿namespace BusinessLayer.Models
 {
-    public class Playlist
+    public class PlaylistUpdateDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public UserUpdateDto UserUpdateDto { get; set; }
     }
 }

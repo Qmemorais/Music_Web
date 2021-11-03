@@ -1,6 +1,6 @@
-﻿namespace DataLayer.Models
+﻿namespace BusinessLayer.Models
 {
-    public class User
+    public class UserUpdateDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
