@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Services.Interface;
+﻿using AutoMapper;
+using BusinessLayer.Models;
+using BusinessLayer.Services.Interface;
 using DataLayer.Models;
 using DataLayer.UnitOfWork;
 using System.Collections.Generic;
@@ -14,13 +16,16 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public void Create(Playlist PlaylistToCreate)
+        public void Create(PlaylistCreateDto playlistToCreate)
         {
-            var GetPlaylist = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == PlaylistToCreate.Name
-            && playlist.UserId == PlaylistToCreate.UserId);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<PlaylistCreateDto, Playlist>());
+            var mapper = new Mapper(config);
+            Playlist PlaylistCreate = mapper.Map<PlaylistCreateDto, Playlist>(playlistToCreate);
+            var GetPlaylist = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == PlaylistCreate.Name
+            && playlist.UserId == PlaylistCreate.UserId);
             if (GetPlaylist==false)
             {
-                _unitOfWork.Playlists.Create(PlaylistToCreate);
+                _unitOfWork.Playlists.Create(PlaylistCreate);
                 _unitOfWork.Save();
             }
         }
@@ -31,19 +36,30 @@ namespace BusinessLayer.Services
             _unitOfWork.Save();
         }
 
-        public IEnumerable<Playlist> GetAll(int id)
+        public IEnumerable<PlaylistUpdateDto> GetAll(int id)
         {
-            return _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Playlist, PlaylistUpdateDto>());
+            var mapper = new Mapper(config);
+            var playlistsFromDB = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
+            var playlist= mapper.Map<List<PlaylistUpdateDto>>(playlistsFromDB);
+            return playlist;
         }
 
-        public Playlist GetPlaylist(int id)
+        public PlaylistUpdateDto GetPlaylist(int id)
         {
-            return _unitOfWork.Playlists.Get(id);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Playlist, PlaylistUpdateDto>());
+            var mapper = new Mapper(config);
+            var playlistFromDB = _unitOfWork.Playlists.Get(id);
+            var playlist = mapper.Map<PlaylistUpdateDto>(playlistFromDB);
+            return playlist;
         }
 
-        public void Update(Playlist PlaylistToUpdate)
+        public void Update(PlaylistUpdateDto playlistToUpdate)
         {
-            _unitOfWork.Playlists.Update(PlaylistToUpdate);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<PlaylistUpdateDto, Playlist>());
+            var mapper = new Mapper(config);
+            Playlist playlist = mapper.Map<PlaylistUpdateDto, Playlist>(playlistToUpdate);
+            _unitOfWork.Playlists.Update(playlist);
             _unitOfWork.Save();
         }
 

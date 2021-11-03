@@ -1,14 +1,14 @@
-﻿using DataLayer.Models;
+﻿using BusinessLayer.Models;
 using System.Collections.Generic;
 
 namespace BusinessLayer.Services.Interface
 {
     public interface IUserService
     {
-        public void Create(User UserToCreate);
+        public void Create(UserCreateDto userToCreate);
         public void Delete(int id);
-        public void Update(User UserToUpdate);
-        public User GetUser(int id);
-        public IEnumerable<User> GetAllUser();
+        public void Update( UserUpdateDto userToUpdate);
+        public UserUpdateDto GetUser(int id);
+        public IEnumerable<UserUpdateDto> GetAllUser();
     }
 }
