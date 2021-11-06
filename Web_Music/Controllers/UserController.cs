@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
 using BusinessLayer.Services.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using Web_Music.Models;
 
@@ -22,13 +23,13 @@ namespace Web_Music.Controls
         }
         [Route("Get/{id:int}")]
         [HttpGet]
+        [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
         public IActionResult GetById([FromRoute] int id)
         {
             try
             {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<UserUpdateDto, UserUpdateRequestModel>());
-                _mapper = new Mapper(config);
-                var getUser = _mapper.Map<UserUpdateRequestModel>(_userService.GetUser(id));
+                var user = _userService.GetUser(id);
+                var getUser = _mapper.Map<UserResponseModel>(user);
                 return Ok(getUser);
             }
             catch (Exception ex)
@@ -36,28 +37,32 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
+        [Route("GetAll")]
         [HttpGet]
+        [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
         public IActionResult GetAllUsers()
         {
             try
             {
-                var listOfUsers = _userService.GetAllUser();
-                return Ok(listOfUsers);
+                var users = _userService.GetAllUser();
+                var getUser = _mapper.Map<IEnumerable<UserResponseModel>>(users);
+                return Ok(getUser);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
             }
         }
+        [Route("Create")]
         [HttpPost]
-        public IActionResult CreateUser([FromBody] UserCreateRequestModel requestModel)
+        public IActionResult CreateUser([FromBody] UserCreateRequestModel model)
         {
             try
             {
-                if (requestModel == null)
+                if (model == null)
                     return BadRequest();
 
-                var user = _mapper.Map<UserCreateDto>(requestModel);
+                var user = _mapper.Map<UserCreateDto>(model);
                 _userService.Create(user);
 
                 return StatusCode((int)HttpStatusCode.Created);
@@ -67,7 +72,8 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
-        [HttpDelete("id")]
+        [Route("Delete/{id:int}")]
+        [HttpDelete]
         public IActionResult DeleteUser([FromRoute] int id)
         {
             try
@@ -80,12 +86,12 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
-        [HttpPut("id")]
-        public IActionResult UpdateUser([FromRoute] int id, [FromBody] UserUpdateRequestModel requestModel)
+        [Route("Update")]
+        [HttpPut]
+        public IActionResult UpdateUser([FromBody] UserResponseModel requestModel)
         {
             try
             {
-                UserUpdateRequestModel user = _mapper.Map<UserUpdateDto, UserUpdateRequestModel>(_userService.GetUser(id));
                 _userService.Update(_mapper.Map<UserUpdateDto>(requestModel));
                 return NoContent();
             }
