@@ -8,28 +8,31 @@ using System.Collections.Generic;
 using System.Net;
 using Web_Music.Models;
 
-namespace Web_Music.Controls
+namespace Web_Music.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
     public class UserController: Controller
     {
         private readonly IUserService _userService;
-        private IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        private readonly IMapper _mappedUsers;
+
+
+        public UserController(IUserService userService, IMapper mappedUsers)
         {
             _userService = userService;
-            _mapper = mapper;
+            _mappedUsers = mappedUsers;
         }
-        [Route("Get/{id:int}")]
-        [HttpGet]
+
+        [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
-        public IActionResult GetById([FromRoute] int id)
+        public IActionResult GetUserById([FromRoute] int userId)
         {
             try
             {
-                var user = _userService.GetUser(id);
-                var getUser = _mapper.Map<UserResponseModel>(user);
+                var isUserExist = _userService.GetUser(userId);
+                if (isUserExist is null)
+                    return NotFound();
+                var getUser = _mappedUsers.Map<UserResponseModel>(isUserExist);
                 return Ok(getUser);
             }
             catch (Exception ex)
@@ -37,33 +40,35 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
-        [Route("GetAll")]
+
         [HttpGet]
-        [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<UserResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllUsers()
         {
             try
             {
-                var users = _userService.GetAllUser();
-                var getUser = _mapper.Map<IEnumerable<UserResponseModel>>(users);
-                return Ok(getUser);
+                var isUsersExist = _userService.GetAllUsers();
+                if (isUsersExist is null)
+                    return NotFound();
+                var getUsers = _mappedUsers.Map<IEnumerable<UserResponseModel>>(isUsersExist);
+                return Ok(getUsers);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
             }
         }
-        [Route("Create")]
+
         [HttpPost]
-        public IActionResult CreateUser([FromBody] UserCreateRequestModel model)
+        public IActionResult CreateUser([FromBody] UserCreateRequestModel requestModel)
         {
             try
             {
-                if (model == null)
+                if (requestModel == null)
                     return BadRequest();
 
-                var user = _mapper.Map<UserCreateDto>(model);
-                _userService.Create(user);
+                var user = _mappedUsers.Map<UserCreateDto>(requestModel);
+                _userService.CreateUser(user);
 
                 return StatusCode((int)HttpStatusCode.Created);
             }
@@ -72,13 +77,16 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
-        [Route("Delete/{id:int}")]
-        [HttpDelete]
-        public IActionResult DeleteUser([FromRoute] int id)
+
+        [HttpDelete("{userId}")]
+        public IActionResult DeleteUser([FromRoute] int userId)
         {
             try
             {
-                _userService.Delete(id);
+                var isUserExist = _userService.GetUser(userId);
+                if(isUserExist is null)
+                    return NotFound();
+                _userService.DeleteUser(userId);
                 return NoContent();
             }
             catch (Exception ex)
@@ -86,13 +94,14 @@ namespace Web_Music.Controls
                 return StatusCode(500, ex);
             }
         }
-        [Route("Update")]
-        [HttpPut]
-        public IActionResult UpdateUser([FromBody] UserResponseModel requestModel)
+
+        [HttpPut("{userId}")]
+        public IActionResult UpdateUser([FromRoute] int userId, [FromBody] UserUpdateRequestModel requestModel)
         {
             try
             {
-                _userService.Update(_mapper.Map<UserUpdateDto>(requestModel));
+                var userToUpdate = _mappedUsers.Map<UserUpdateDto>(requestModel);
+                _userService.UpdateUser(userId, userToUpdate);
                 return NoContent();
             }
             catch (Exception ex)

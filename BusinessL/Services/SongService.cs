@@ -12,28 +12,30 @@ namespace BusinessLayer.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
+
         public SongService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public void Create(SongCreateDto songToCreate)
+        public void CreateSong(SongCreateDto songToCreate)
         {
             var createSong = _mapper.Map<Song>(songToCreate);
             _unitOfWork.Songs.Create(createSong);
             _unitOfWork.Save();
         }
 
-        public void Delete(int id)
+        public void DeleteSong(int songId)
         {
-            _unitOfWork.Songs.Delete(id);
+            _unitOfWork.Songs.Delete(songId);
             _unitOfWork.Save();
         }
 
-        public IEnumerable<SongUpdateDto> GetAll(int id)
+        public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId)
         {
-            var songFromDB = _unitOfWork.Songs.GetAll().Where(song => song.PlaylistId == id);
-            var songs = _mapper.Map<IEnumerable<SongUpdateDto>>(songFromDB);
+            var songFromDB = _unitOfWork.Songs.GetAll().Where(song => song.PlaylistId == playlistId);
+            var songs = _mapper.Map<IEnumerable<SongDto>>(songFromDB);
             return songs;
         }
     }

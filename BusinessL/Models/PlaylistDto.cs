@@ -1,6 +1,6 @@
-﻿namespace Web_Music.Models
+﻿namespace BusinessLayer.Models
 {
-    public class PlaylistCreateRequestModel
+    public class PlaylistDto
     {
         public string Name { get; set; }
         public int UserId { get; set; }

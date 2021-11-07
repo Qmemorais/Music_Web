@@ -6,8 +6,8 @@ namespace BusinessLayer.Services.Interface
 {
     public interface ISongService
     {
-        public void Create(SongCreateDto songToCreate);
-        public void Delete(int id);
-        public IEnumerable<SongUpdateDto> GetAll(int id);
+        public void CreateSong(SongCreateDto songToCreate);
+        public void DeleteSong(int songId);
+        public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId);
     }
 }

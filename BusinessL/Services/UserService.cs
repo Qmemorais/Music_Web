@@ -12,45 +12,50 @@ namespace BusinessLayer.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
+
         public UserService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public void Create(UserCreateDto userToCreate)
+        public void CreateUser(UserCreateDto userToCreate)
         {
             var createUser = _mapper.Map<User>(userToCreate);
             var anyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == createUser.Email);
-            if (anyUser.Equals(false))
+            if (!anyUser)
             {
                 _unitOfWork.Users.Create(createUser);
                 _unitOfWork.Save();
             }
         }
 
-        public void Delete(int id)
+        public void DeleteUser(int userId)
         {
-            _unitOfWork.Users.Delete(id);
+            _unitOfWork.Users.Delete(userId);
             _unitOfWork.Save();
         }
 
-        public IEnumerable<UserUpdateDto> GetAllUser()
+        public IEnumerable<UserDto> GetAllUsers()
         {
             var users = _unitOfWork.Users.GetAll();
-            var usersToGet = _mapper.Map<IEnumerable<UserUpdateDto>>(users);
+            var usersToGet = _mapper.Map<IEnumerable<UserDto>>(users);
             return usersToGet;
         }
 
-        public UserUpdateDto GetUser(int id)
+        public UserDto GetUser(int userId)
         {
-            var userFromDB = _unitOfWork.Users.Get(id);
-            var user = _mapper.Map<UserUpdateDto>(userFromDB);
+            var userFromDB = _unitOfWork.Users.Get(userId);
+            var user = _mapper.Map<UserDto>(userFromDB);
             return user;
         }
 
-        public void Update(UserUpdateDto userToUpdate)
+        public void UpdateUser(int userId, UserUpdateDto userToUpdate)
         {
-            User user = _mapper.Map<User>(userToUpdate);
+            var user = _unitOfWork.Users.Get(userId);
+            user.Name = userToUpdate.Name;
+            user.Surname = userToUpdate.Surname;
+            user.Email = userToUpdate.Email;
             _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
         }

@@ -12,47 +12,50 @@ namespace BusinessLayer.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
+
         public PlaylistService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public void Create(PlaylistCreateDto playlistToCreate)
+        public void CreatePlaylist(PlaylistCreateDto playlistToCreate)
         {
             var playlistCreate = _mapper.Map<Playlist>(playlistToCreate);
-            var GetPlaylist = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name
+            var isPlaylistExisting = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name
             && playlist.UserId == playlistCreate.UserId);
-            if (GetPlaylist==false)
+            if (!isPlaylistExisting)
             {
                 _unitOfWork.Playlists.Create(playlistCreate);
                 _unitOfWork.Save();
             }
         }
 
-        public void Delete(int id)
+        public void DeletePlaylist(int id)
         {
             _unitOfWork.Playlists.Delete(id);
             _unitOfWork.Save();
         }
 
-        public IEnumerable<PlaylistUpdateDto> GetAll(int id)
+        public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int id)
         {
             var playlistsFromDB = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
-            var playlist= _mapper.Map<IEnumerable<PlaylistUpdateDto>>(playlistsFromDB);
+            var playlist= _mapper.Map<IEnumerable<PlaylistDto>>(playlistsFromDB);
             return playlist;
         }
 
-        public PlaylistUpdateDto GetPlaylist(int id)
+        public PlaylistDto GetPlaylist(int id)
         {
             var playlistFromDB = _unitOfWork.Playlists.Get(id);
-            var playlist = _mapper.Map<PlaylistUpdateDto>(playlistFromDB);
+            var playlist = _mapper.Map<PlaylistDto>(playlistFromDB);
             return playlist;
         }
 
-        public void Update(PlaylistUpdateDto playlistToUpdate)
+        public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate)
         {
-            Playlist playlist = _mapper.Map<Playlist>(playlistToUpdate);
+            var playlist = _unitOfWork.Playlists.Get(playlistId);
+            playlist.Name = playlistToUpdate.Name;
             _unitOfWork.Playlists.Update(playlist);
             _unitOfWork.Save();
         }

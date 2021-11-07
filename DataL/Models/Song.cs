@@ -10,7 +10,7 @@
         public string Time { get; set; }
         //public string Genre { get; set; }
         public int PlaylistId { get; set; }
-        public Playlist Playlist { get; set; }
+        public virtual Playlist Playlist { get; set; }
 
     }
 }

@@ -11,8 +11,8 @@ namespace Web_Music.Controllers
         }
         public IActionResult GetInfo(int id)
         {
-            var listPlaylists = _playlistService.GetAll(id);
-            return Ok(listPlaylists);
+            //var listPlaylists = _playlistService.GetAll(id);
+            return Ok();
         }
     }
 }

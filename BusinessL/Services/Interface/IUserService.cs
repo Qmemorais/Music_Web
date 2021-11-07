@@ -5,10 +5,10 @@ namespace BusinessLayer.Services.Interface
 {
     public interface IUserService
     {
-        public void Create(UserCreateDto userToCreate);
-        public void Delete(int id);
-        public void Update( UserUpdateDto userToUpdate);
-        public UserUpdateDto GetUser(int id);
-        public IEnumerable<UserUpdateDto> GetAllUser();
+        public void CreateUser(UserCreateDto userToCreate);
+        public void DeleteUser(int userId);
+        public void UpdateUser(int userId, UserUpdateDto userToUpdate);
+        public UserDto GetUser(int userId);
+        public IEnumerable<UserDto> GetAllUsers();
     }
 }

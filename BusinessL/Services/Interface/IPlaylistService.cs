@@ -5,11 +5,11 @@ namespace BusinessLayer.Services.Interface
 {
     public interface IPlaylistService
     {
-        public void Create(PlaylistCreateDto playlistToCreate);
-        public void Delete(int id);
-        public IEnumerable<PlaylistUpdateDto> GetAll(int id);
-        public void Update(PlaylistUpdateDto playlistToUpdate);
-        public PlaylistUpdateDto GetPlaylist(int id);
-        //bool Share(int id,int idNewUser);
+        public void CreatePlaylist(PlaylistCreateDto playlistToCreate);
+        public void DeletePlaylist(int playlistId);
+        public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int playlistId);
+        public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate);
+        public PlaylistDto GetPlaylist(int playlistId);
+        //public void Share(int id,int idNewUser);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BusinessLayer.Models
 {
-    public class SongUpdateDto
+    public class SongDto
     {
         public string Name { get ; set ; }
         //public string Path { get; set; }
