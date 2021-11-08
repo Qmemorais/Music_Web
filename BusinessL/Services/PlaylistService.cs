@@ -32,22 +32,22 @@ namespace BusinessLayer.Services
             }
         }
 
-        public void DeletePlaylist(int id)
+        public void DeletePlaylist(int playlistId)
         {
-            _unitOfWork.Playlists.Delete(id);
+            _unitOfWork.Playlists.Delete(playlistId);
             _unitOfWork.Save();
         }
 
-        public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int id)
+        public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
-            var playlistsFromDB = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == id);
-            var playlist= _mapper.Map<IEnumerable<PlaylistDto>>(playlistsFromDB);
+            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == userId);
+            var playlist= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
             return playlist;
         }
 
-        public PlaylistDto GetPlaylist(int id)
+        public PlaylistDto GetPlaylist(int playlistId)
         {
-            var playlistFromDB = _unitOfWork.Playlists.Get(id);
+            var playlistFromDB = _unitOfWork.Playlists.Get(playlistId);
             var playlist = _mapper.Map<PlaylistDto>(playlistFromDB);
             return playlist;
         }

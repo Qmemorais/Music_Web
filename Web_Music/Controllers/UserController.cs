@@ -29,10 +29,10 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var isUserExist = _userService.GetUser(userId);
-                if (isUserExist is null)
+                var user = _userService.GetUser(userId);
+                if (user == null)
                     return NotFound();
-                var getUser = _mappedUsers.Map<UserResponseModel>(isUserExist);
+                var getUser = _mappedUsers.Map<UserResponseModel>(user);
                 return Ok(getUser);
             }
             catch (Exception ex)
@@ -47,10 +47,10 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var isUsersExist = _userService.GetAllUsers();
-                if (isUsersExist is null)
+                var users = _userService.GetAllUsers();
+                if (users == null)
                     return NotFound();
-                var getUsers = _mappedUsers.Map<IEnumerable<UserResponseModel>>(isUsersExist);
+                var getUsers = _mappedUsers.Map<IEnumerable<UserResponseModel>>(users);
                 return Ok(getUsers);
             }
             catch (Exception ex)
@@ -83,8 +83,8 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var isUserExist = _userService.GetUser(userId);
-                if(isUserExist is null)
+                var user = _userService.GetUser(userId);
+                if(user == null)
                     return NotFound();
                 _userService.DeleteUser(userId);
                 return NoContent();

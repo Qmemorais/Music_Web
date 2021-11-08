@@ -38,5 +38,12 @@ namespace BusinessLayer.Services
             var songs = _mapper.Map<IEnumerable<SongDto>>(songFromDB);
             return songs;
         }
+
+        public SongDto GetSongById(int songId)
+        {
+            var songFromDB = _unitOfWork.Songs.Get(songId);
+            var song = _mapper.Map<SongDto>(songFromDB);
+            return song;
+        }
     }
 }
