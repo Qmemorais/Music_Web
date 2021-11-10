@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace BusinessLayer.Models
 {
     public class PlaylistDto

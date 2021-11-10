@@ -8,6 +8,7 @@ namespace BusinessLayer.Services.Interface
         public void CreatePlaylist(PlaylistCreateDto playlistToCreate);
         public void DeletePlaylist(int playlistId);
         public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate);
+        public IEnumerable<PlaylistDto> GetAllPlaylists();
         public PlaylistDto GetPlaylist(int playlistId);
     }
 }
