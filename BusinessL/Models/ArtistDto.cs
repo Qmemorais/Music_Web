@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace BusinessLayer.Models
 {
-    public class PlaylistDto
+    public class ArtistDto
     {
         public string Name { get; set; }
     }

@@ -8,6 +8,10 @@ namespace DataLayer.Context
         public DbSet<Song> Songs { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+        public DbSet<UserPlaylist> UserPlaylists { get; set; }
+        public DbSet<PlaylistSong> PlaylistSongs { get; set; }
         public MusicContext(DbContextOptions<MusicContext> options)
     : base(options)
         { }

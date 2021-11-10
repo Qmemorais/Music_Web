@@ -2,11 +2,11 @@
 
 namespace DataLayer.Models
 {
-    public class Playlist
+    public class Album
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public virtual IEnumerable<User> Users { get; set; }
+        public int AtristId { get; set; }
         public virtual IEnumerable<Song> Songs { get; set; }
     }
 }

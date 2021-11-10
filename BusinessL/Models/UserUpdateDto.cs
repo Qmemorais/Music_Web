@@ -1,4 +1,5 @@
-﻿namespace BusinessLayer.Models
+﻿
+namespace BusinessLayer.Models
 {
     public class UserUpdateDto
     {

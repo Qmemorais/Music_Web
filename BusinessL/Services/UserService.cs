@@ -21,11 +21,11 @@ namespace BusinessLayer.Services
         }
         public void CreateUser(UserCreateDto userToCreate)
         {
-            var createUser = _mapper.Map<User>(userToCreate);
-            var anyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == createUser.Email);
+            var mappedUser = _mapper.Map<User>(userToCreate);
+            var anyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == mappedUser.Email);
             if (!anyUser)
             {
-                _unitOfWork.Users.Create(createUser);
+                _unitOfWork.Users.Create(mappedUser);
                 _unitOfWork.Save();
             }
         }

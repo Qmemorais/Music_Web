@@ -1,19 +1,12 @@
-
 using BusinessLayer.Services;
 using BusinessLayer.Services.Interface;
 using DataLayer.Context;
-using DataLayer.Repository;
 using DataLayer.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web_Music
 {
@@ -21,7 +14,8 @@ namespace Web_Music
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MusicContext>(options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;"));
+            services.AddDbContext<MusicContext>(options => 
+            options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(typeof(Startup).Assembly);
             services.AddScoped<IUserService, UserService>();

@@ -1,4 +1,6 @@
-﻿namespace DataLayer.Models
+﻿using System.Collections.Generic;
+
+namespace DataLayer.Models
 {
     public class User
     {
@@ -6,5 +8,6 @@
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
+        public virtual IEnumerable<Playlist> Playlists { get; set; }
     }
 }
