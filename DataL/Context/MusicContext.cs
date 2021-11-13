@@ -10,8 +10,7 @@ namespace DataLayer.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
-        public DbSet<UserPlaylist> UserPlaylists { get; set; }
-        public DbSet<PlaylistSong> PlaylistSongs { get; set; }
+
         public MusicContext(DbContextOptions<MusicContext> options)
     : base(options)
         { }
@@ -19,6 +18,18 @@ namespace DataLayer.Context
         {
             if (!optionsBuilder.IsConfigured)
                 optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                    .HasMany(c => c.Playlists)
+                    .WithMany(s => s.Users)
+                    .UsingEntity(j => j.ToTable("UserPlaylist"));
+            modelBuilder.Entity<Playlist>()
+                    .HasMany(c => c.Songs)
+                    .WithMany(s => s.Playlists)
+                    .UsingEntity(j => j.ToTable("PlaylistSong"));
         }
     }
 }

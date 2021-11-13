@@ -19,13 +19,31 @@ namespace BusinessLayer.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public void CreateUser(UserCreateDto userToCreate)
         {
             var mappedUser = _mapper.Map<User>(userToCreate);
             var anyUser = _unitOfWork.Users.GetAll().Any(user => user.Email == mappedUser.Email);
+
             if (!anyUser)
             {
                 _unitOfWork.Users.Create(mappedUser);
+                _unitOfWork.Save();
+            }
+        }
+
+        public void AddPlaylistToUser(int userId, int playlistId)
+        {
+            var user = _unitOfWork.Users.Get(userId);
+            var isPlaylistExist = user.Playlists.Any(playlist => playlist.Id == playlistId);
+
+            if (!isPlaylistExist)
+            {
+                var playlist = _unitOfWork.Playlists.Get(playlistId);
+                user.Playlists.Add(playlist);
+                playlist.Users.Add(user);
+                _unitOfWork.Users.Update(user);
+                _unitOfWork.Playlists.Update(playlist);
                 _unitOfWork.Save();
             }
         }
@@ -39,15 +57,21 @@ namespace BusinessLayer.Services
         public IEnumerable<UserDto> GetAllUsers()
         {
             var users = _unitOfWork.Users.GetAll();
-            var usersToGet = _mapper.Map<IEnumerable<UserDto>>(users);
-            return usersToGet;
+            var mappedUsers = _mapper.Map<IEnumerable<UserDto>>(users);
+            return mappedUsers;
+        }
+
+        public IEnumerable<UserDto> GetAllUsersByPlaylist(int playlistId)
+        {
+            var allUsers = GetAllUsers().Where(playlists => playlists.PlaylistsId.Contains(playlistId));
+            return allUsers;
         }
 
         public UserDto GetUser(int userId)
         {
             var userFromDB = _unitOfWork.Users.Get(userId);
-            var user = _mapper.Map<UserDto>(userFromDB);
-            return user;
+            var mappedUser = _mapper.Map<UserDto>(userFromDB);
+            return mappedUser;
         }
 
         public void UpdateUser(int userId, UserUpdateDto userToUpdate)
@@ -56,6 +80,15 @@ namespace BusinessLayer.Services
             user.Name = userToUpdate.Name;
             user.Surname = userToUpdate.Surname;
             user.Email = userToUpdate.Email;
+
+            foreach(int playlistId in userToUpdate.PlaylistsId)
+            {
+                var playlist = user.Playlists.FirstOrDefault(playlist => playlist.Id == playlistId);
+
+                if (playlist == null)
+                    user.Playlists.Add(playlist);
+            }
+
             _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
         }

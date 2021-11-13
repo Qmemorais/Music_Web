@@ -6,7 +6,7 @@ namespace DataLayer.Repository
     {
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();
-        void Create(TEntity entity);
+        public TEntity Create(TEntity entity);
         void Update(TEntity entity);
         void Delete(int id);
     }

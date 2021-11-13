@@ -11,8 +11,6 @@ namespace DataLayer.UnitOfWork
         IGenericRepository<Playlist> Playlists{ get; }
         IGenericRepository<Album> Albums { get;}
         IGenericRepository<Artist> Artists { get;}
-        IGenericRepository<UserPlaylist> UserPlaylists { get;}
-        IGenericRepository<PlaylistSong> PlaylistSongs { get;}
         void Save();
     }
 }

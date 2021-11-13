@@ -12,9 +12,10 @@ namespace DataLayer.Repository
             db = context;
         }
 
-        public void Create(TEntity entity)
+        public TEntity Create(TEntity entity)
         {
             db.Set<TEntity>().Add(entity);
+            return entity;
         }
 
         public void Delete(int id)

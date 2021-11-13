@@ -20,14 +20,22 @@ namespace BusinessLayer.Services
             _mapper = mapper;
         }
 
+        public void AddSongToPlaylist(int playlistId, int songId)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void CreatePlaylist(PlaylistCreateDto playlistToCreate)
         {
+            var userWhoCreatePlaylist = _unitOfWork.Users.Get(playlistToCreate.UserId);
             var playlistCreate = _mapper.Map<Playlist>(playlistToCreate);
             var isPlaylistExisting = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name
-            && playlist.UserId == playlistCreate.UserId);
+            && playlist.Users.Contains(userWhoCreatePlaylist));
+
             if (!isPlaylistExisting)
             {
-                _unitOfWork.Playlists.Create(playlistCreate);
+                var newPlaylist = _unitOfWork.Playlists.Create(playlistCreate);
+                userWhoCreatePlaylist.Playlists.Add(newPlaylist);
                 _unitOfWork.Save();
             }
         }
@@ -38,28 +46,43 @@ namespace BusinessLayer.Services
             _unitOfWork.Save();
         }
 
+        public IEnumerable<PlaylistDto> GetAllPlaylists()
+        {
+            var allPlaylists = _unitOfWork.Playlists.GetAll();
+            var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylists);
+            return mappedPlaylists;
+        }
+
         public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
-            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.UserId == userId);
-            var playlist= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
-            return playlist;
+            var userToGetPlaylists = _unitOfWork.Users.Get(userId);
+            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Users.Contains(userToGetPlaylists));
+            var mappedPlaylists= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
+            return mappedPlaylists;
         }
 
         public PlaylistDto GetPlaylist(int playlistId)
         {
             var playlistFromDB = _unitOfWork.Playlists.Get(playlistId);
-            var playlist = _mapper.Map<PlaylistDto>(playlistFromDB);
-            return playlist;
+            var mappedPlaylist = _mapper.Map<PlaylistDto>(playlistFromDB);
+            return mappedPlaylist;
         }
 
         public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate)
         {
             var playlist = _unitOfWork.Playlists.Get(playlistId);
             playlist.Name = playlistToUpdate.Name;
+
+            foreach(int songId in playlistToUpdate.SongsId)
+            {
+                var song = playlist.Songs.FirstOrDefault(song => song.Id== songId);
+
+                if (song == null)
+                    playlist.Songs.Add(song);
+            }
+
             _unitOfWork.Playlists.Update(playlist);
             _unitOfWork.Save();
         }
-
-        //public bool Share(int id,int idNewUser){}
     }
 }

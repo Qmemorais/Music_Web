@@ -8,6 +8,6 @@ namespace DataLayer.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
-        public virtual IEnumerable<Playlist> Playlists { get; set; }
+        public virtual List<Playlist> Playlists { get; set; }
     }
 }

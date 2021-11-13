@@ -9,6 +9,7 @@ namespace BusinessLayer.Services.Interface
         public void UpdateSong(int songId, SongUpdateDto songToUpdate);
         public void DeleteSong(int songId);
         public IEnumerable<SongDto> GetAllSongs();
+        public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId);
         public SongDto GetSongById(int songId);
     }
 }
