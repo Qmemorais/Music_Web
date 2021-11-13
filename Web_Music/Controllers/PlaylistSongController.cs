@@ -46,7 +46,28 @@ namespace Web_Music.Controllers
             }
         }
 
-        //[HttpGet("{songId}")]
+        [HttpGet("{songId}")]
+        [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
+        public IActionResult GetAllPlaylistsBySong([FromRoute] int songId)
+        {
+            try
+            {
+                var getSong = _songService.GetSongById(songId);
+                if (getSong == null)
+                    return NotFound();
+
+                var allPlaylistsBySong = _playlistService.GetAllPlaylistsBySong(songId);
+                if (allPlaylistsBySong == null)
+                    return NotFound();
+
+                var getAllSongsByPlaylist = _mapper.Map<IEnumerable<PlaylistResponseModel>>(allPlaylistsBySong);
+                return Ok(getAllSongsByPlaylist);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
 
         [HttpPost]
         public IActionResult AddPlaylistToUser(int playlistId, int songId)

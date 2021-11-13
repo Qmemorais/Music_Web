@@ -53,6 +53,14 @@ namespace BusinessLayer.Services
             return mappedPlaylists;
         }
 
+        public IEnumerable<PlaylistDto> GetAllPlaylistsBySong(int songId)
+        {
+            var songToGetPlaylists = _unitOfWork.Songs.Get(songId);
+            var allPlaylistsBySong = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Songs.Contains(songToGetPlaylists));
+            var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsBySong);
+            return mappedPlaylists;
+        }
+
         public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
             var userToGetPlaylists = _unitOfWork.Users.Get(userId);
