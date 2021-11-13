@@ -2,10 +2,10 @@
 
 namespace Web_Music.Models
 {
-    public class PlaylistResponseModel
+    public class AlbumResponseModel
     {
         public string Name { get; set; }
-        public IEnumerable<int> UsersId { get; set; }
+        public int AtristId { get; set; }
         public IEnumerable<int> SongsId { get; set; }
     }
 }

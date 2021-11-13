@@ -1,7 +1,5 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web_Music.Models
 {
@@ -10,5 +8,6 @@ namespace Web_Music.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
+        public IEnumerable<int> PlaylistsId { get; set; }
     }
 }

@@ -13,14 +13,20 @@ namespace Web_Music
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
-        {
+        {//add db to program
             services.AddDbContext<MusicContext>(options => 
             options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;"));
+            //add unitOfWork to work with dbContext
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //add automapper to protect models
             services.AddAutoMapper(typeof(Startup).Assembly);
+            //add services to work with models
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
             services.AddScoped<ISongService, SongService>();
+            services.AddScoped<IArtistService, ArtistService>();
+            services.AddScoped<IAlbumService, AlbumService>();
+            //add controllers
             services.AddControllers();
         }
 
@@ -32,7 +38,7 @@ namespace Web_Music
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting(); // используем систему маршрутизации
+            app.UseRouting(); 
 
             app.UseEndpoints(endpoints =>
             {
