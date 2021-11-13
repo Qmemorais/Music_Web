@@ -10,17 +10,17 @@ using Web_Music.Models;
 
 namespace Web_Music.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]s")]
     public class UserController: Controller
     {
         private readonly IUserService _userService;
-        private readonly IMapper _mappedUsers;
+        private readonly IMapper _mapper;
 
 
-        public UserController(IUserService userService, IMapper mappedUsers)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
-            _mappedUsers = mappedUsers;
+            _mapper = mapper;
         }
 
         [HttpGet("{userId}")]
@@ -32,8 +32,10 @@ namespace Web_Music.Controllers
                 var user = _userService.GetUser(userId);
                 if (user == null)
                     return NotFound();
-                var getUser = _mappedUsers.Map<UserResponseModel>(user);
-                return Ok(getUser);
+
+                var mappedUser = _mapper.Map<UserResponseModel>(user);
+
+                return Ok(mappedUser);
             }
             catch (Exception ex)
             {
@@ -50,8 +52,10 @@ namespace Web_Music.Controllers
                 var users = _userService.GetAllUsers();
                 if (users == null)
                     return NotFound();
-                var getUsers = _mappedUsers.Map<IEnumerable<UserResponseModel>>(users);
-                return Ok(getUsers);
+
+                var mappedUsers = _mapper.Map<IEnumerable<UserResponseModel>>(users);
+
+                return Ok(mappedUsers);
             }
             catch (Exception ex)
             {
@@ -67,8 +71,8 @@ namespace Web_Music.Controllers
                 if (requestModel == null)
                     return BadRequest();
 
-                var user = _mappedUsers.Map<UserCreateDto>(requestModel);
-                _userService.CreateUser(user);
+                var mappedUser = _mapper.Map<UserCreateDto>(requestModel);
+                _userService.CreateUser(mappedUser);
 
                 return StatusCode((int)HttpStatusCode.Created);
             }
@@ -86,7 +90,9 @@ namespace Web_Music.Controllers
                 var user = _userService.GetUser(userId);
                 if(user == null)
                     return NotFound();
+
                 _userService.DeleteUser(userId);
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -100,8 +106,9 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var userToUpdate = _mappedUsers.Map<UserUpdateDto>(requestModel);
-                _userService.UpdateUser(userId, userToUpdate);
+                var mappedUserToUpdate = _mapper.Map<UserUpdateDto>(requestModel);
+                _userService.UpdateUser(userId, mappedUserToUpdate);
+
                 return NoContent();
             }
             catch (Exception ex)
