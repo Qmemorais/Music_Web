@@ -70,7 +70,7 @@ namespace Web_Music.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPlaylistToUser(int playlistId, int songId)
+        public IActionResult AddSongToPlaylist(int playlistId, int songId)
         {
             try
             {

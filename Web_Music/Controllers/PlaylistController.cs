@@ -44,7 +44,7 @@ namespace Web_Music.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllUsers()
+        public IActionResult GetAllPlaylist()
         {
             try
             {
