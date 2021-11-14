@@ -52,7 +52,7 @@ namespace Web_Music.Controllers
                 if (playlists == null)
                     return NotFound();
 
-                var mappedPlaylists = _mapper.Map<IEnumerable<UserResponseModel>>(playlists);
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistResponseModel>>(playlists);
 
                 return Ok(mappedPlaylists);
             }
