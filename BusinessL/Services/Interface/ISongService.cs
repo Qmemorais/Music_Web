@@ -10,6 +10,8 @@ namespace BusinessLayer.Services.Interface
         public void DeleteSong(int songId);
         public IEnumerable<SongDto> GetAllSongs();
         public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId);
+        public IEnumerable<SongDto> GetAllSongsByArtist(int artistId);
+        public IEnumerable<SongDto> GetAllSongsByAlbum(int albumId);
         public SongDto GetSongById(int songId);
     }
 }

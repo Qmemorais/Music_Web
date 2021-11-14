@@ -81,5 +81,19 @@ namespace BusinessLayer.Services
             _unitOfWork.Songs.Update(song);
             _unitOfWork.Save();
         }
+
+        public IEnumerable<SongDto> GetAllSongsByArtist(int artistId)
+        {
+            var songFromArtist = _unitOfWork.Songs.GetAll().Where(song => song.ArtistId==artistId);
+            var mappedSongs = _mapper.Map<IEnumerable<SongDto>>(songFromArtist);
+            return mappedSongs;
+        }
+
+        public IEnumerable<SongDto> GetAllSongsByAlbum(int albumId)
+        {
+            var songFromAlbum = _unitOfWork.Songs.GetAll().Where(song => song.AlbumId == albumId);
+            var mappedSongs = _mapper.Map<IEnumerable<SongDto>>(songFromAlbum);
+            return mappedSongs;
+        }
     }
 }
