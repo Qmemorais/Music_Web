@@ -22,7 +22,7 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("{albumId}")]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllSongsByAlbum([FromRoute] int albumId)
         {

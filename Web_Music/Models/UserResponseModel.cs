@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DataLayer.Models;
 namespace Web_Music.Models
 {
     public class UserResponseModel
@@ -6,6 +7,6 @@ namespace Web_Music.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
-        public IEnumerable<int> PlaylistsId { get; set; }
+        public IEnumerable<Playlist> Playlists { get; set; }
     }
 }

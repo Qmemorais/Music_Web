@@ -65,10 +65,11 @@ namespace BusinessLayer.Services
 
         public IEnumerable<UserDto> GetAllUsersByPlaylist(int playlistId)
         {
-            var allUsers = GetAllUsers().Where(users => users.PlaylistsId.Contains(playlistId));
+            var playlistToGetUsers = _unitOfWork.Playlists.Get(playlistId);
+            var allUsers = GetAllUsers().Where(users => users.Playlists.Contains(playlistToGetUsers));
             return allUsers;
         }
-
+        
         public UserDto GetUser(int userId)
         {
             var userFromDB = _unitOfWork.Users.Get(userId);
@@ -83,12 +84,12 @@ namespace BusinessLayer.Services
             user.Surname = userToUpdate.Surname;
             user.Email = userToUpdate.Email;
 
-            foreach(int playlistId in userToUpdate.PlaylistsId)
+            foreach(Playlist playlist in userToUpdate.Playlists)
             {
-                var playlist = user.Playlists.FirstOrDefault(playlist => playlist.Id == playlistId);
+                var playlistToGet = user.Playlists.FirstOrDefault(playlist => playlist.Id == playlist.Id);
 
-                if (playlist == null)
-                    user.Playlists.Add(playlist);
+                if (playlistToGet == null)
+                    user.Playlists.Add(playlistToGet);
             }
 
             _unitOfWork.Users.Update(user);

@@ -68,7 +68,7 @@ namespace BusinessLayer.Services
         public IEnumerable<PlaylistDto> GetAllPlaylistsBySong(int songId)
         {
             var songToGetPlaylists = _unitOfWork.Songs.Get(songId);
-            var allPlaylistsBySong = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Songs.Contains(songToGetPlaylists));
+            var allPlaylistsBySong = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.Songs.Contains(songToGetPlaylists));
             var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsBySong);
             return mappedPlaylists;
         }
@@ -76,7 +76,7 @@ namespace BusinessLayer.Services
         public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
             var userToGetPlaylists = _unitOfWork.Users.Get(userId);
-            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Users.Contains(userToGetPlaylists));
+            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.Users.Contains(userToGetPlaylists));
             var mappedPlaylists= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
             return mappedPlaylists;
         }
@@ -93,12 +93,12 @@ namespace BusinessLayer.Services
             var playlist = _unitOfWork.Playlists.Get(playlistId);
             playlist.Name = playlistToUpdate.Name;
 
-            foreach(int songId in playlistToUpdate.SongsId)
+            foreach(Song song in playlistToUpdate.Songs)
             {
-                var song = playlist.Songs.FirstOrDefault(song => song.Id== songId);
+                var songToGet = playlist.Songs.FirstOrDefault(song => song.Id== song.Id);
 
-                if (song == null)
-                    playlist.Songs.Add(song);
+                if (songToGet == null)
+                    playlist.Songs.Add(songToGet);
             }
 
             _unitOfWork.Playlists.Update(playlist);

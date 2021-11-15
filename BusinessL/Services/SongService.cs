@@ -26,13 +26,7 @@ namespace BusinessLayer.Services
 
             if(!isSongExist)
             {
-                var song = _unitOfWork.Songs.Create(createSong);
-                var artist = _unitOfWork.Artists.Get(songToCreate.ArtistId);
-                artist.Songs.Add(song);
-                var album = _unitOfWork.Albums.Get(songToCreate.AlbumId);
-                album.Songs.Add(song);
-                _unitOfWork.Artists.Update(artist);
-                _unitOfWork.Albums.Update(album);
+                _unitOfWork.Songs.Create(createSong);
                 _unitOfWork.Save();
             }
         }
@@ -44,7 +38,8 @@ namespace BusinessLayer.Services
         }
 
         public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId)
-        {
+        {//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            //переделать эту фигню
             var playlistToGetSongs = _unitOfWork.Playlists.Get(playlistId);
             var songFromPlaylist = _unitOfWork.Songs.GetAll().Where(song => song.Playlists.Contains(playlistToGetSongs));
             var mappedSongs = _mapper.Map<IEnumerable<SongDto>>(songFromPlaylist);
@@ -52,7 +47,8 @@ namespace BusinessLayer.Services
         }
 
         public IEnumerable<SongDto> GetAllSongs()
-        {
+        {//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            //добавить чтобы выводило спиок плейлистов
             var songFromDB = _unitOfWork.Songs.GetAll();
             var mappedSongs = _mapper.Map<IEnumerable<SongDto>>(songFromDB);
             return mappedSongs;
@@ -70,12 +66,12 @@ namespace BusinessLayer.Services
             var song = _unitOfWork.Songs.Get(songId);
             song.Name = songToUpdate.Name;
             
-            foreach(int playlistId in songToUpdate.PlaylistsId)
+            foreach(Playlist playlist in songToUpdate.Playlists)
             {
-                var playlist = song.Playlists.FirstOrDefault(playlist => playlist.Id == playlistId);
+                var playlistToGet = song.Playlists.FirstOrDefault(playlist => playlist.Id == playlist.Id);
 
-                if (playlist == null)
-                    song.Playlists.Add(playlist);
+                if (playlistToGet == null)
+                    song.Playlists.Add(playlistToGet);
             }
 
             _unitOfWork.Songs.Update(song);

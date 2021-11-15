@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DataLayer.Models;
+using System.Collections.Generic;
 
 namespace Web_Music.Models
 {
@@ -6,6 +7,6 @@ namespace Web_Music.Models
     {
         public string Name { get; set; }
         public int AtristId { get; set; }
-        public IEnumerable<int> SongsId { get; set; }
+        public IEnumerable<Song> Songs { get; set; }
     }
 }
