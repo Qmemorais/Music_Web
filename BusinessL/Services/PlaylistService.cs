@@ -22,20 +22,32 @@ namespace BusinessLayer.Services
 
         public void AddSongToPlaylist(int playlistId, int songId)
         {
-            throw new System.NotImplementedException();
+            var playlist = _unitOfWork.Playlists.Get(playlistId);
+            var isSongExist = playlist.Songs.Any(song => song.Id == songId);
+
+            if (!isSongExist)
+            {
+                var song = _unitOfWork.Songs.Get(songId);
+                playlist.Songs.Add(song);
+                song.Playlists.Add(playlist);
+                _unitOfWork.Playlists.Update(playlist);
+                _unitOfWork.Songs.Update(song);
+                _unitOfWork.Save();
+            }
         }
 
         public void CreatePlaylist(PlaylistCreateDto playlistToCreate)
         {
             var userWhoCreatePlaylist = _unitOfWork.Users.Get(playlistToCreate.UserId);
             var playlistCreate = _mapper.Map<Playlist>(playlistToCreate);
-            var isPlaylistExisting = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name
-            && playlist.Users.Contains(userWhoCreatePlaylist));
+            var isPlaylistExisting = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name);
 
             if (!isPlaylistExisting)
             {
                 var newPlaylist = _unitOfWork.Playlists.Create(playlistCreate);
                 userWhoCreatePlaylist.Playlists.Add(newPlaylist);
+                newPlaylist.Users.Add(userWhoCreatePlaylist);
+
                 _unitOfWork.Save();
             }
         }

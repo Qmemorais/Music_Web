@@ -28,6 +28,8 @@ namespace Web_Music
             services.AddScoped<IAlbumService, AlbumService>();
             //add controllers
             services.AddControllers();
+            //add swagger
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +37,8 @@ namespace Web_Music
         {
             if (env.IsDevelopment())
             {
+                app.UseSwagger();
+                app.UseSwaggerUI();
                 app.UseDeveloperExceptionPage();
             }
 

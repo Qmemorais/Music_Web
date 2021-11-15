@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Web_Music.Controllers
 {
-    [Route("[Album/{albumId}/songs]")]
+    [Route("[controller]s")]
+    //[Route("[Album/{albumId}/songs]")]
     public class AlbumSongController : ControllerBase
     {
         private readonly ISongService _songService;
@@ -21,7 +22,7 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{albumId}")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllSongsByAlbum([FromRoute] int albumId)
         {

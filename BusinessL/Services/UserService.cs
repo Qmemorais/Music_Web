@@ -35,16 +35,18 @@ namespace BusinessLayer.Services
         public void AddPlaylistToUser(int userId, int playlistId)
         {
             var user = _unitOfWork.Users.Get(userId);
-            var isPlaylistExist = user.Playlists.Any(playlist => playlist.Id == playlistId);
-
-            if (!isPlaylistExist)
+            var isExistingPlaylist = user.Playlists.Any(x => x.Id == playlistId);
+            if (!isExistingPlaylist)
             {
                 var playlist = _unitOfWork.Playlists.Get(playlistId);
-                user.Playlists.Add(playlist);
-                playlist.Users.Add(user);
-                _unitOfWork.Users.Update(user);
-                _unitOfWork.Playlists.Update(playlist);
-                _unitOfWork.Save();
+                if (playlist != null)
+                {
+                    user.Playlists.Add(playlist);
+                    playlist.Users.Add(user);
+                    _unitOfWork.Playlists.Update(playlist);
+                    _unitOfWork.Users.Update(user);
+                    _unitOfWork.Save();
+                }
             }
         }
 
@@ -63,7 +65,7 @@ namespace BusinessLayer.Services
 
         public IEnumerable<UserDto> GetAllUsersByPlaylist(int playlistId)
         {
-            var allUsers = GetAllUsers().Where(playlists => playlists.PlaylistsId.Contains(playlistId));
+            var allUsers = GetAllUsers().Where(users => users.PlaylistsId.Contains(playlistId));
             return allUsers;
         }
 

@@ -14,8 +14,8 @@ namespace DataLayer.Repository
 
         public TEntity Create(TEntity entity)
         {
-            db.Set<TEntity>().Add(entity);
-            return entity;
+            var ent = db.Set<TEntity>().Add(entity);
+            return ent.Entity;
         }
 
         public void Delete(int id)

@@ -9,6 +9,6 @@ namespace DataLayer.Models
         public string Time { get; set; }
         public int ArtistId { get; set; }
         public int AlbumId { get; set; }
-        public virtual List<Playlist> Playlists { get; set; }
+        public virtual List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
 }

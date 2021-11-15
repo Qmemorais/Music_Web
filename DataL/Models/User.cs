@@ -10,6 +10,6 @@ namespace DataLayer.Models
         public string Surname { get; set; }
         [Required]
         public string Email { get; set; }
-        public virtual List<Playlist> Playlists { get; set; }
+        public virtual List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
 }
