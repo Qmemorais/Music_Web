@@ -41,7 +41,6 @@ namespace BusinessLayer.Services
         public IEnumerable<ArtistDto> GetAllArtists()
         {
             var artists = _unitOfWork.Artists.GetAll();
-
             var mappedArtists = _mapper.Map<IEnumerable<ArtistDto>>(artists);
             return mappedArtists;
         }
@@ -58,7 +57,7 @@ namespace BusinessLayer.Services
             var artist = _unitOfWork.Artists.Get(artistId);
             artist.Name = artistToUpdate.Name;
 
-            foreach (Song song in artistToUpdate.Songs)
+            /*foreach (Song song in artistToUpdate.Songs)
             {
                 var songToAdd = artist.Songs.FirstOrDefault(song => song.Id == song.Id);
 
@@ -72,7 +71,7 @@ namespace BusinessLayer.Services
 
                 if (albumToAdd == null)
                     artist.Albums.Add(albumToAdd);
-            }
+            }*/
 
             _unitOfWork.Artists.Update(artist);
             _unitOfWork.Save();

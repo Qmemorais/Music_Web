@@ -3,7 +3,6 @@ using BusinessLayer.Models;
 using BusinessLayer.Services.Interface;
 using DataLayer.Models;
 using DataLayer.UnitOfWork;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,6 +31,7 @@ namespace BusinessLayer.Services
             {
                 var newAlbum = _unitOfWork.Albums.Create(mappedAlbum);
                 artistWhoCreatePlaylist.Albums.Add(newAlbum);
+                _unitOfWork.Artists.Update(artistWhoCreatePlaylist);
                 _unitOfWork.Save();
             }
         }
@@ -68,13 +68,13 @@ namespace BusinessLayer.Services
             var album = _unitOfWork.Albums.Get(albumId);
             album.Name = albumToUpdate.Name;
 
-            foreach(Song song in albumToUpdate.Songs)
+            /*foreach(Song song in albumToUpdate.Songs)
             {
                 var songToGet = album.Songs.FirstOrDefault(song => song.Id == song.Id);
 
                 if (songToGet == null)
                     album.Songs.Add(songToGet);
-            }
+            }*/
 
             _unitOfWork.Albums.Update(album);
             _unitOfWork.Save();

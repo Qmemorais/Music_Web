@@ -26,7 +26,11 @@ namespace BusinessLayer.Services
 
             if(!isSongExist)
             {
-                _unitOfWork.Songs.Create(createSong);
+                var song = _unitOfWork.Songs.Create(createSong);
+                var artist = _unitOfWork.Artists.Get(songToCreate.ArtistId);
+                var album = _unitOfWork.Albums.Get(songToCreate.AlbumId);
+                _unitOfWork.Artists.Update(artist);
+                _unitOfWork.Albums.Update(album);
                 _unitOfWork.Save();
             }
         }

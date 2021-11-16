@@ -7,6 +7,6 @@ namespace DataLayer.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int AtristId { get; set; }
-        public virtual List<Song> Songs { get; set; } = new List<Song>();
+        public virtual List<Song> Songs { get; set; } = new List<Song>(); 
     }
 }
