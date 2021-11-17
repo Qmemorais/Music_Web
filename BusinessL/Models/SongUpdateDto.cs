@@ -10,6 +10,5 @@ namespace BusinessLayer.Models
         public string Time { get; set; }
         public int ArtistId { get; set; }
         public int AlbumId { get; set; }
-        public IEnumerable<Playlist> Playlists { get; set; }
     }
 }

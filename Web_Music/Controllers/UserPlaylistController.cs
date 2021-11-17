@@ -27,7 +27,7 @@ namespace Web_Music.Controllers
 
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllPlaylistsByUser([FromRoute] int userId)
+        public IActionResult GetAllPlaylistsByUser(int userId)
         {
             try
             {

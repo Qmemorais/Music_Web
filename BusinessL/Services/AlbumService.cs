@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
 using BusinessLayer.Services.Interface;
+using DataLayer.Context;
 using DataLayer.Models;
-using DataLayer.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,74 +11,66 @@ namespace BusinessLayer.Services
 {
     public class AlbumService : IAlbumService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly MusicContext _db;
         private readonly IMapper _mapper;
 
 
-        public AlbumService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AlbumService(MusicContext context, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _db = context;
             _mapper = mapper;
         }
 
         public void CreateAlbum(AlbumCreateDto albumToCreate)
         {
-            var artistWhoCreatePlaylist = _unitOfWork.Artists.Get(albumToCreate.AtristId);
+            var artistWhoCreatePlaylist = _db.Artists.Find(albumToCreate.AtristId);
             var mappedAlbum = _mapper.Map<Album>(albumToCreate);
-            var isAlbumExist = _unitOfWork.Albums.GetAll().Any(album => album.Name == mappedAlbum.Name
+            var isAlbumExist = _db.Albums.Any(album => album.Name == mappedAlbum.Name
             && album.AtristId== mappedAlbum.AtristId);
 
             if (!isAlbumExist)
             {
-                var newAlbum = _unitOfWork.Albums.Create(mappedAlbum);
-                artistWhoCreatePlaylist.Albums.Add(newAlbum);
-                _unitOfWork.Artists.Update(artistWhoCreatePlaylist);
-                _unitOfWork.Save();
+                _db.Albums.Add(mappedAlbum);
+                artistWhoCreatePlaylist.Albums.Add(mappedAlbum);
+                _db.Artists.Update(artistWhoCreatePlaylist);
+                _db.SaveChanges();
             }
         }
 
         public void DeleteAlbum(int albumId)
         {
-            _unitOfWork.Albums.Delete(albumId);
-            _unitOfWork.Save();
+            var album = _db.Albums.Find(albumId);
+            _db.Albums.Remove(album);
+            _db.SaveChanges();
         }
 
         public AlbumDto GetAlbum(int albumId)
         {
-            var albumFromDB = _unitOfWork.Albums.Get(albumId);
+            var albumFromDB = _db.Albums.Include(x => x.Songs).Where(album => album.Id == albumId).First();
             var mappedAlbum = _mapper.Map<AlbumDto>(albumFromDB);
             return mappedAlbum;
         }
 
         public IEnumerable<AlbumDto> GetAllAlbums()
         {
-            var allAlbums = _unitOfWork.Albums.GetAll();
+            var allAlbums = _db.Albums.Include(x => x.Songs);
             var mappedAlbums = _mapper.Map<IEnumerable<AlbumDto>>(allAlbums);
             return mappedAlbums;
         }
 
         public IEnumerable<AlbumDto> GetAllAlbumsByArtist(int artistId)
         {
-            var allAlbumsByArtist = _unitOfWork.Albums.GetAll().Where(album => album.AtristId== artistId);
+            var allAlbumsByArtist = _db.Albums.Where(album => album.AtristId== artistId);
             var mappedAlbums = _mapper.Map<IEnumerable<AlbumDto>>(allAlbumsByArtist);
             return mappedAlbums;
         }
 
         public void UpdateAlbum(int albumId, AlbumUpdateDto albumToUpdate)
         {
-            var album = _unitOfWork.Albums.Get(albumId);
+            var album = _db.Albums.Find(albumId);
             album.Name = albumToUpdate.Name;
-
-            /*foreach(Song song in albumToUpdate.Songs)
-            {
-                var songToGet = album.Songs.FirstOrDefault(song => song.Id == song.Id);
-
-                if (songToGet == null)
-                    album.Songs.Add(songToGet);
-            }*/
-
-            _unitOfWork.Albums.Update(album);
-            _unitOfWork.Save();
+            _db.Albums.Update(album);
+            _db.SaveChanges();
         }
 
     }

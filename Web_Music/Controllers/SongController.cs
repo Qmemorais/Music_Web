@@ -96,5 +96,20 @@ namespace Web_Music.Controllers
                 return StatusCode(500, ex);
             }
         }
+
+        [HttpPut("{songId}")]
+        public IActionResult UpdatePlaylist([FromRoute] int songId, [FromBody] SongUpdateRequestModel requestModel)
+        {
+            try
+            {
+                var mappedSongToUpdate = _mapper.Map<SongUpdateDto>(requestModel);
+                _songService.UpdateSong(songId, mappedSongToUpdate);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
     }
 }

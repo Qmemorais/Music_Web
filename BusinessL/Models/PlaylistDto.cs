@@ -7,7 +7,7 @@ namespace BusinessLayer.Models
     public class PlaylistDto
     {
         public string Name { get; set; }
-        public IEnumerable<User> Users { get; set; }
-        public IEnumerable<Song> Songs { get; set; }
+        public IEnumerable<UserUpdateDto> Users { get; set; }
+        public IEnumerable<SongUpdateDto> Songs { get; set; }
     }
 }

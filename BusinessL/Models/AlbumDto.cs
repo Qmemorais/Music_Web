@@ -8,6 +8,6 @@ namespace BusinessLayer.Models
     {
         public string Name { get; set; }
         public int AtristId { get; set; }
-        public IEnumerable<Song> Songs { get; set; }
+        public IEnumerable<SongUpdateDto> Songs { get; set; }
     }
 }

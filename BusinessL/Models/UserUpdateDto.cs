@@ -9,6 +9,5 @@ namespace BusinessLayer.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Email { get; set; }
-        public IEnumerable<Playlist> Playlists { get; set; }
     }
 }

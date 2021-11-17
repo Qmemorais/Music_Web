@@ -1,7 +1,6 @@
 using BusinessLayer.Services;
 using BusinessLayer.Services.Interface;
 using DataLayer.Context;
-using DataLayer.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +15,6 @@ namespace Web_Music
         {//add db to program
             services.AddDbContext<MusicContext>(options => 
             options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;"));
-            //add unitOfWork to work with dbContext
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             //add automapper to protect models
             services.AddAutoMapper(typeof(Startup).Assembly);
             //add services to work with models

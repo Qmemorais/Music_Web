@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
 using BusinessLayer.Services.Interface;
+using DataLayer.Context;
 using DataLayer.Models;
-using DataLayer.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,99 +11,90 @@ namespace BusinessLayer.Services
 {
     public class PlaylistService: IPlaylistService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly MusicContext _db;
         private readonly IMapper _mapper;
 
 
-        public PlaylistService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PlaylistService(MusicContext context, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _db = context;
             _mapper = mapper;
         }
 
         public void AddSongToPlaylist(int playlistId, int songId)
         {
-            var playlist = _unitOfWork.Playlists.Get(playlistId);
+            var playlist = _db.Playlists.Include(x => x.Songs).Where(s => s.Id == playlistId).First();
             var isSongExist = playlist.Songs.Any(song => song.Id == songId);
 
             if (!isSongExist)
             {
-                var song = _unitOfWork.Songs.Get(songId);
+                var song = _db.Songs.Find(songId);
                 playlist.Songs.Add(song);
-                song.Playlists.Add(playlist);
-                _unitOfWork.Playlists.Update(playlist);
-                _unitOfWork.Songs.Update(song);
-                _unitOfWork.Save();
+                _db.Playlists.Update(playlist);
+                _db.Songs.Update(song);
+                _db.SaveChanges();
             }
         }
 
         public void CreatePlaylist(PlaylistCreateDto playlistToCreate)
         {
-            var userWhoCreatePlaylist = _unitOfWork.Users.Get(playlistToCreate.UserId);
+            var userWhoCreatePlaylist = _db.Users.Find(playlistToCreate.UserId);
             var playlistCreate = _mapper.Map<Playlist>(playlistToCreate);
-            var isPlaylistExisting = _unitOfWork.Playlists.GetAll().Any(playlist => playlist.Name == playlistCreate.Name);
+            var isPlaylistExisting = _db.Playlists.Any(playlist => playlist.Name == playlistCreate.Name);
 
             if (!isPlaylistExisting)
             {
-                var newPlaylist = _unitOfWork.Playlists.Create(playlistCreate);
-                userWhoCreatePlaylist.Playlists.Add(newPlaylist);
-                newPlaylist.Users.Add(userWhoCreatePlaylist);
-
-                _unitOfWork.Save();
+                _db.Playlists.Add(playlistCreate);
+                userWhoCreatePlaylist.Playlists.Add(playlistCreate);
+                playlistCreate.Users.Add(userWhoCreatePlaylist);
+                _db.Users.Update(userWhoCreatePlaylist);
+                _db.SaveChanges();
             }
         }
 
         public void DeletePlaylist(int playlistId)
         {
-            _unitOfWork.Playlists.Delete(playlistId);
-            _unitOfWork.Save();
+            var playlist = _db.Playlists.Find(playlistId);
+            _db.Playlists.Remove(playlist);
+            _db.SaveChanges();
         }
 
         public IEnumerable<PlaylistDto> GetAllPlaylists()
         {
-            var allPlaylists = _unitOfWork.Playlists.GetAll();
+            var allPlaylists = _db.Playlists.Include(x => x.Songs).Include(s => s.Users);
             var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylists);
             return mappedPlaylists;
         }
 
         public IEnumerable<PlaylistDto> GetAllPlaylistsBySong(int songId)
         {
-            var songToGetPlaylists = _unitOfWork.Songs.Get(songId);
-            var allPlaylistsBySong = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.Songs.Contains(songToGetPlaylists));
+            var songToGetPlaylists = _db.Songs.Find(songId);
+            var allPlaylistsBySong = _db.Playlists.Include(x => x.Songs).Where(playlist => playlist.Songs.Contains(songToGetPlaylists));
             var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsBySong);
             return mappedPlaylists;
         }
 
         public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
-            var userToGetPlaylists = _unitOfWork.Users.Get(userId);
-            var allPlaylistsByUser = _unitOfWork.Playlists.GetAll().Where(playlist => playlist.Users.Contains(userToGetPlaylists));
+            var userToGetPlaylists = _db.Users.Find(userId);
+            var allPlaylistsByUser = _db.Playlists.Include(s => s.Users).Where(playlist => playlist.Users.Contains(userToGetPlaylists));
             var mappedPlaylists= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
             return mappedPlaylists;
         }
 
         public PlaylistDto GetPlaylist(int playlistId)
         {
-            var playlistFromDB = _unitOfWork.Playlists.Get(playlistId);
+            var playlistFromDB = _db.Playlists.Include(x => x.Songs).Include(s => s.Users).Where(playlist => playlist.Id== playlistId).First();
             var mappedPlaylist = _mapper.Map<PlaylistDto>(playlistFromDB);
             return mappedPlaylist;
         }
 
         public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate)
         {
-            var playlist = _unitOfWork.Playlists.Get(playlistId);
+            var playlist = _db.Playlists.Find(playlistId);
             playlist.Name = playlistToUpdate.Name;
-
-            foreach(Song song in playlistToUpdate.Songs)
-            {
-                var songToGet = playlist.Songs.FirstOrDefault(song => song.Id== song.Id);
-
-                if (songToGet == null)
-                    playlist.Songs.Add(songToGet);
-            }
-
-            _unitOfWork.Playlists.Update(playlist);
-            _unitOfWork.Save();
+            _db.Playlists.Update(playlist);
+            _db.SaveChanges();
         }
     }
 }

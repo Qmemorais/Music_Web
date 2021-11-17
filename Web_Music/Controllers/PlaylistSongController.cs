@@ -24,7 +24,7 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        /*[HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllSongsByPlaylist([FromRoute] int playlistId)
         {
@@ -45,7 +45,7 @@ namespace Web_Music.Controllers
             {
                 return StatusCode(500, ex);
             }
-        }
+        }*/
 
         [HttpGet("{songId}")]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
