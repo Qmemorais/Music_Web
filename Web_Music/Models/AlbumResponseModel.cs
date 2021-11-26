@@ -7,6 +7,6 @@ namespace Web_Music.Models
     {
         public string Name { get; set; }
         public int AtristId { get; set; }
-        public IEnumerable<SongUpdateRequestModel> Songs { get; set; }
+        public List<SongUpdateRequestModel> Songs { get; set; }
     }
 }

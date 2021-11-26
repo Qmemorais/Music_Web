@@ -3,7 +3,7 @@ using BusinessLayer.Models;
 using DataLayer.Models;
 using Web_Music.Models;
 
-namespace BusinessLayer
+namespace Web_Music.SourceMappingProfiles
 {
     public class SourceMappingPlaylistProfile : Profile
     {

@@ -6,7 +6,7 @@ namespace Web_Music.Models
     public class ArtistResponseModel
     {
         public string Name { get; set; }
-        public IEnumerable<SongUpdateRequestModel> Songs { get; set; }
-        public IEnumerable<AlbumUpdateRequestModel> Albums { get; set; }
+        public List<SongUpdateRequestModel> Songs { get; set; }
+        public List<AlbumUpdateRequestModel> Albums { get; set; }
     }
 }

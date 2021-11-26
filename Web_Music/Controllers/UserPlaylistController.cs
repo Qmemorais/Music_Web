@@ -9,8 +9,8 @@ using Web_Music.Models;
 
 namespace Web_Music.Controllers
 {
-    [Route("[controller]s")]
-    //[Route("[User/{userId}/playlists]")]
+    [ApiController]
+    [Route("User/{userId}/playlists")]
     public class UserPlaylistController : Controller
     {
         private readonly IPlaylistService _playlistService;
@@ -25,9 +25,9 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllPlaylistsByUser(int userId)
+        public IActionResult GetAllPlaylistsByUser([FromRoute] int userId)
         {
             try
             {
@@ -50,8 +50,8 @@ namespace Web_Music.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult AddPlaylistToUser(int userId, int playlistId)
+        [HttpPut("{playlistId}")]
+        public IActionResult AddPlaylistToUser([FromRoute] int userId, [FromRoute] int playlistId)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Web_Music.Controllers
             }
         }
 
-        /*[HttpGet("{playlistId}")]
+        [HttpGet("{playlistId}")]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllUsersByPlaylist([FromRoute] int playlistId)
         {
@@ -98,6 +98,6 @@ namespace Web_Music.Controllers
             {
                 return StatusCode(500, ex);
             }
-        }*/
+        }
     }
 }

@@ -9,8 +9,8 @@ using Web_Music.Models;
 
 namespace Web_Music.Controllers
 {
-    [Route("[controller]s")]
-    //[Route("[Playlist/{playlistId}/songs]")]
+    [ApiController]
+    [Route("Playlist/{playlistId}/songs")]
     public class PlaylistSongController : Controller
     {
         private readonly ISongService _songService;
@@ -24,7 +24,7 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        /*[HttpGet]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllSongsByPlaylist([FromRoute] int playlistId)
         {
@@ -45,7 +45,7 @@ namespace Web_Music.Controllers
             {
                 return StatusCode(500, ex);
             }
-        }*/
+        }
 
         [HttpGet("{songId}")]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]

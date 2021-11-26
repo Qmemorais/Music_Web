@@ -5,12 +5,13 @@ namespace DataLayer.Context
 {
     public class MusicContext : DbContext
     {
-        public DbSet<Song> Songs { get; set; }
-        public DbSet<Playlist> Playlists { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Album> Albums { get; set; }
-        public DbSet<Artist> Artists { get; set; }
+        public virtual DbSet<Song> Songs { get; set; }
+        public virtual DbSet<Playlist> Playlists { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Album> Albums { get; set; }
+        public virtual DbSet<Artist> Artists { get; set; }
 
+        public MusicContext() { }
         public MusicContext(DbContextOptions<MusicContext> options)
     : base(options)
         { }

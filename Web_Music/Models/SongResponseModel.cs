@@ -9,6 +9,6 @@ namespace Web_Music.Models
         public string Time { get; set; }
         public int ArtistId { get; set; }
         public int AlbumId { get; set; }
-        public IEnumerable<PlaylistUpdateRequestModel> Playlists { get; set; }
+        public List<PlaylistUpdateRequestModel> Playlists { get; set; }
     }
 }

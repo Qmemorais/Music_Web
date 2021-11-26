@@ -8,8 +8,8 @@ using Web_Music.Models;
 
 namespace Web_Music.Controllers
 {
-    [Route("[controller]s")]
-    //[Route("[Artist/{artistId}/albums]")]
+    [ApiController]
+    [Route("Artist/{artistId}/albums")]
     public class AlbumArtistController : ControllerBase
     {
         private readonly IAlbumService _albumService;
@@ -22,7 +22,7 @@ namespace Web_Music.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{artistId}")]
+        [HttpGet("{albumId}")]
         [ProducesResponseType(typeof(IEnumerable<AlbumResponseModel>), StatusCodes.Status200OK)]
         public IActionResult GetAllAlbumsByArtist([FromRoute] int artistId)
         {
