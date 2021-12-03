@@ -3,14 +3,12 @@ using AutoMapper;
 using BusinessLayer.Services.Interface;
 using Moq;
 using BusinessLayer.Models;
-using Web_Music.SourceMappingProfiles;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
 using Web_Music.Models;
 using System.Linq;
 using AutoFixture;
-using System.Net;
 
 namespace Web_Music.Controllers.Tests
 {
@@ -24,6 +22,7 @@ namespace Web_Music.Controllers.Tests
         private UserController controller;
 
         private UserDto expectUser;
+        private readonly int haveUser = 1, noUser = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -31,9 +30,13 @@ namespace Web_Music.Controllers.Tests
             fixture = new Fixture();
             fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
             fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
             mockService = new Mock<IUserService>();
             mapper = new Mock<IMapper>();
+
             expectUser = CreateUser();
+
+            controller = new UserController(mockService.Object, mapper.Object);
         }
 
         [TestMethod()]
@@ -47,29 +50,25 @@ namespace Web_Music.Controllers.Tests
                 Email = expectUser.Email,
             };
 
-            mockService.Setup(service => service.GetUser(It.IsAny<int>())).Returns(expectUser);
+            mockService.Setup(service => service.GetUser(haveUser)).Returns(expectUser);
             mapper.Setup(m => m.Map<UserResponseModel>(expectUser)).Returns(userResponse);
 
-            controller = new UserController(mockService.Object, mapper.Object);
             //act
-            var result = controller.GetUserById(1) as OkObjectResult;
+            var result = controller.GetUserById(haveUser) as OkObjectResult;
 
             var responseModel = (UserResponseModel)result?.Value;
             //assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(userResponse, responseModel);
-            mockService.Verify(x=>x.GetUser(1));
         }
         
         [TestMethod()]
         public void GetUserByIdTest_WithUnexistId_ReturnNotFound()
         {
             //arange
-            mockService.Setup(service => service.GetUser(It.IsAny<int>())).Returns((UserDto)null);
-
-            controller = new UserController(mockService.Object, mapper.Object);
+            mockService.Setup(service => service.GetUser(noUser)).Returns((UserDto)null);
             //act
-            var result = controller.GetUserById(new int());
+            var result = controller.GetUserById(noUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -86,8 +85,6 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<UserResponseModel>>(users)).Returns(userResponse);
             mockService.Setup(service => service.GetAllUsers()).Returns(users);
-
-            controller = new UserController(mockService.Object, mapper.Object);
             //act
             var result = controller.GetAllUsers() as OkObjectResult;
 
@@ -95,7 +92,6 @@ namespace Web_Music.Controllers.Tests
             //assert
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(userResponse, responseModel);
-            mockService.Verify(x => x.GetAllUsers());
         }
         
         [TestMethod()]
@@ -103,8 +99,6 @@ namespace Web_Music.Controllers.Tests
         {
             //arrange
             var user = fixture.Create<object>() as UserCreateRequestModel;
-
-            controller = new UserController(mockService.Object, mapper.Object);
             //Act
             var result = controller.CreateUser(user);
             //assert
@@ -124,38 +118,31 @@ namespace Web_Music.Controllers.Tests
             };
 
             mapper.Setup(m => m.Map<UserCreateDto>(user)).Returns(userResponse);
-
-            controller = new UserController(mockService.Object, mapper.Object);
             //Act
             var result = controller.CreateUser(user) as StatusCodeResult;
             //assert
             Assert.AreEqual(201, result.StatusCode);
-            mockService.Verify(x => x.CreateUser(userResponse));
         }
         
         [TestMethod()]
         public void DeleteUserTest_WithExistId_ReturnNoContent()
         {
             //arrange
-            mockService.Setup(service => service.GetUser(It.IsAny<int>())).Returns(expectUser);
-            controller = new UserController(mockService.Object, mapper.Object);
+            mockService.Setup(service => service.GetUser(haveUser)).Returns(expectUser);
             //Act
-            var result = controller.DeleteUser(1);
+            var result = controller.DeleteUser(haveUser);
             var resultCode = result as NoContentResult;
             //assert
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
             Assert.AreEqual(204, resultCode.StatusCode);
-            mockService.Verify(x => x.DeleteUser(1));
         }
         [TestMethod()]
         public void DeleteUserTest_WithUnexistId_ReturnNotFound()
         {
             //arange
-            mockService.Setup(service => service.GetUser(It.IsAny<int>())).Returns((UserDto)null);
-
-            controller = new UserController(mockService.Object, mapper.Object);
+            mockService.Setup(service => service.GetUser(noUser)).Returns((UserDto)null);
             //act
-            var result = controller.DeleteUser(new int());
+            var result = controller.DeleteUser(noUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -178,18 +165,16 @@ namespace Web_Music.Controllers.Tests
             };
 
             mapper.Setup(m => m.Map<UserUpdateDto>(userResponse)).Returns(userUpdateDto);
-            mockService.Setup(service => service.GetUser(It.IsAny<int>())).Returns(expectUser);
-            controller = new UserController(mockService.Object, mapper.Object);
+            mockService.Setup(service => service.GetUser(haveUser)).Returns(expectUser);
             //Act
-            var result = controller.UpdateUser(1, userResponse);
+            var result = controller.UpdateUser(haveUser, userResponse);
             var resultCode = result as NoContentResult;
             //assert
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
             Assert.AreEqual(204, resultCode.StatusCode);
-            mockService.Verify(x => x.UpdateUser(1, userUpdateDto));
         }
         
-        public UserDto CreateUser()
+        public static UserDto CreateUser()
         {
             var playlists = new List<PlaylistUpdateDto>
             {
