@@ -175,7 +175,7 @@ namespace Web_Music.Controllers.Tests
             mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns((PlaylistDto)null);
             mockUserService.Setup(service => service.GetAllUsersByPlaylist(haveUser)).Returns(users);
             //act
-            var result = controller.GetAllPlaylistsByUser(noUser);
+            var result = controller.GetAllUsersByPlaylist(noUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -195,7 +195,7 @@ namespace Web_Music.Controllers.Tests
             mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns(playlist);
             mockUserService.Setup(service => service.GetAllUsersByPlaylist(haveUser)).Returns((IEnumerable<UserDto>)null);
             //act
-            var result = controller.GetAllPlaylistsByUser(haveUser);
+            var result = controller.GetAllUsersByPlaylist(haveUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
