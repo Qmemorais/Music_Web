@@ -81,7 +81,7 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var getPlaylist = _userService.GetUser(playlistId);
+                var getPlaylist = _playlistService.GetPlaylist(playlistId);
 
                 if (getPlaylist == null)
                     return NotFound();
