@@ -98,7 +98,7 @@ namespace Web_Music.Controllers
         }
 
         [HttpPut("{songId}")]
-        public IActionResult UpdatePlaylist([FromRoute] int songId, [FromBody] SongUpdateRequestModel requestModel)
+        public IActionResult UpdateSong([FromRoute] int songId, [FromBody] SongUpdateRequestModel requestModel)
         {
             try
             {
