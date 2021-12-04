@@ -34,8 +34,6 @@ namespace Web_Music.Controllers.Tests
             mockUserService = new Mock<IUserService>();
             mapper = new Mock<IMapper>();
 
-            //expectUser = CreateUser();
-
             controller = new UserPlaylistController(mockPlaylistService.Object, mockUserService.Object, mapper.Object);
         }
 
