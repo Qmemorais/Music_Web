@@ -12,12 +12,14 @@ namespace Web_Music.Controllers
     [Route("Artist/{artistId}/songs")]
     public class ArtistSongController : ControllerBase
     {
+        private readonly IArtistService _artistService;
         private readonly ISongService _songService;
         private readonly IMapper _mapper;
 
 
-        public ArtistSongController(ISongService songService, IMapper mapper)
+        public ArtistSongController(IArtistService artistService, ISongService songService, IMapper mapper)
         {
+            _artistService = artistService;
             _songService = songService;
             _mapper = mapper;
         }
@@ -28,6 +30,10 @@ namespace Web_Music.Controllers
         {
             try
             {
+                var artist = _artistService.GetArtist(artistId);
+                if(artist == null)
+                    return NotFound();
+
                 var songs = _songService.GetAllSongsByArtist(artistId);
                 if (songs == null)
                     return NotFound();
