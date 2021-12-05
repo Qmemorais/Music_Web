@@ -24,21 +24,22 @@ namespace BusinessLayer.Services
         public void AddSongToPlaylist(int playlistId, int songId)
         {
             var playlist = _db.Playlists.Include(x => x.Songs).Where(s => s.Id == playlistId).First();
+            var song = _db.Songs.First(x => x.Id == songId);
             var isSongExist = playlist.Songs.Any(song => song.Id == songId);
 
             if (!isSongExist)
             {
-                var song = _db.Songs.Find(songId);
-                playlist.Songs.Add(song);
+                var _song = _db.Songs.Find(songId);
+                playlist.Songs.Add(_song);
                 _db.Playlists.Update(playlist);
-                _db.Songs.Update(song);
+                _db.Songs.Update(_song);
                 _db.SaveChanges();
             }
         }
 
         public void CreatePlaylist(PlaylistCreateDto playlistToCreate)
         {
-            var userWhoCreatePlaylist = _db.Users.Find(playlistToCreate.UserId);
+            var userWhoCreatePlaylist = _db.Users.First(playlist => playlist.Id == playlistToCreate.UserId);
             var playlistCreate = _mapper.Map<Playlist>(playlistToCreate);
             var isPlaylistExisting = _db.Playlists.Any(playlist => playlist.Name == playlistCreate.Name);
 
@@ -54,7 +55,7 @@ namespace BusinessLayer.Services
 
         public void DeletePlaylist(int playlistId)
         {
-            var playlist = _db.Playlists.Find(playlistId);
+            var playlist = _db.Playlists.First(x => x.Id == playlistId);
             _db.Playlists.Remove(playlist);
             _db.SaveChanges();
         }
@@ -68,7 +69,7 @@ namespace BusinessLayer.Services
 
         public IEnumerable<PlaylistDto> GetAllPlaylistsBySong(int songId)
         {
-            var songToGetPlaylists = _db.Songs.Find(songId);
+            var songToGetPlaylists = _db.Songs.First(x => x.Id == songId);
             var allPlaylistsBySong = _db.Playlists.Include(x => x.Songs).Where(playlist => playlist.Songs.Contains(songToGetPlaylists));
             var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsBySong);
             return mappedPlaylists;
@@ -76,7 +77,7 @@ namespace BusinessLayer.Services
 
         public IEnumerable<PlaylistDto> GetAllPlaylistsByUser(int userId)
         {
-            var userToGetPlaylists = _db.Users.Find(userId);
+            var userToGetPlaylists = _db.Users.First(x => x.Id == userId);
             var allPlaylistsByUser = _db.Playlists.Include(s => s.Users).Where(playlist => playlist.Users.Contains(userToGetPlaylists));
             var mappedPlaylists= _mapper.Map<IEnumerable<PlaylistDto>>(allPlaylistsByUser);
             return mappedPlaylists;
@@ -91,7 +92,7 @@ namespace BusinessLayer.Services
 
         public void UpdatePlaylist(int playlistId, PlaylistUpdateDto playlistToUpdate)
         {
-            var playlist = _db.Playlists.Find(playlistId);
+            var playlist = _db.Playlists.First(x => x.Id == playlistId);
             playlist.Name = playlistToUpdate.Name;
             _db.Playlists.Update(playlist);
             _db.SaveChanges();
