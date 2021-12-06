@@ -23,7 +23,7 @@ namespace BusinessLayer.Services
 
         public void CreateAlbum(AlbumCreateDto albumToCreate)
         {
-            var artistWhoCreatePlaylist = _db.Artists.Find(albumToCreate.AtristId);
+            var artistWhoCreatePlaylist = _db.Artists.First(x => x.Id == albumToCreate.AtristId);
             var mappedAlbum = _mapper.Map<Album>(albumToCreate);
             var isAlbumExist = _db.Albums.Any(album => album.Name == mappedAlbum.Name
             && album.AtristId== mappedAlbum.AtristId);
@@ -39,7 +39,7 @@ namespace BusinessLayer.Services
 
         public void DeleteAlbum(int albumId)
         {
-            var album = _db.Albums.Find(albumId);
+            var album = _db.Albums.First(x => x.Id == albumId);
             _db.Albums.Remove(album);
             _db.SaveChanges();
         }
@@ -67,7 +67,7 @@ namespace BusinessLayer.Services
 
         public void UpdateAlbum(int albumId, AlbumUpdateDto albumToUpdate)
         {
-            var album = _db.Albums.Find(albumId);
+            var album = _db.Albums.First(x => x.Id == albumId);
             album.Name = albumToUpdate.Name;
             _db.Albums.Update(album);
             _db.SaveChanges();
