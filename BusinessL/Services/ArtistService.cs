@@ -35,7 +35,7 @@ namespace BusinessLayer.Services
 
         public void DeleteArtist(int artistId)
         {
-            var artist = _db.Artists.Find(artistId);
+            var artist = _db.Artists.First(x => x.Id == artistId);
             _db.Artists.Remove(artist);
             _db.SaveChanges();
         }
@@ -56,7 +56,7 @@ namespace BusinessLayer.Services
 
         public void UpdateArtist(int artistId, ArtistUpdateDto artistToUpdate)
         {
-            var artist = _db.Artists.Find(artistId);
+            var artist = _db.Artists.First(x => x.Id == artistId);
             artist.Name = artistToUpdate.Name;
             _db.Artists.Update(artist);
             _db.SaveChanges();
