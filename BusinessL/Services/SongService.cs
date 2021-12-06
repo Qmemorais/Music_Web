@@ -34,7 +34,7 @@ namespace BusinessLayer.Services
 
         public void DeleteSong(int songId)
         {
-            var song = _db.Songs.Find(songId);
+            var song = _db.Songs.First(x => x.Id == songId);
 
             if (song != null)
             {
@@ -45,7 +45,7 @@ namespace BusinessLayer.Services
 
         public IEnumerable<SongDto> GetAllSongsByPlaylist(int playlistId)
         {
-            var playlistToGetSongs = _db.Playlists.Find(playlistId);
+            var playlistToGetSongs = _db.Playlists.First(x => x.Id == playlistId);
             var songFromPlaylist = _db.Songs.Where(song => song.Playlists.Contains(playlistToGetSongs));
             var mappedSongs = _mapper.Map<IEnumerable<SongDto>>(songFromPlaylist);
             return mappedSongs;
@@ -67,7 +67,7 @@ namespace BusinessLayer.Services
 
         public void UpdateSong(int songId, SongUpdateDto songToUpdate)
         {
-            var song = _db.Songs.Find(songId);
+            var song = _db.Songs.First(x => x.Id == songId);
             song.Name = songToUpdate.Name;
             _db.Songs.Update(song);
             _db.SaveChanges();
