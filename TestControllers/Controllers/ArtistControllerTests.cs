@@ -20,7 +20,7 @@ namespace Web_Music.Controllers.Tests
 
         private ArtistController controller;
 
-        private readonly int have = 1, no = 0;
+        private readonly int existId = 1, unexistId = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -42,19 +42,21 @@ namespace Web_Music.Controllers.Tests
             var artistResponse = fixture.Create<ArtistResponseModel>();
 
             mapper.Setup(m => m.Map<ArtistResponseModel>(artist)).Returns(artistResponse);
-            mockService.Setup(service => service.GetArtist(have)).Returns(artist);
+            mockService.Setup(service => service.GetArtist(existId)).Returns(artist);
             //act
-            var result = controller.GetArtistById(have) as OkObjectResult;
+            var result = controller.GetArtistById(existId) as OkObjectResult;
             var responseModel = (ArtistResponseModel)result?.Value;
             //assert
+            Assert.IsNotNull(responseModel);
             Assert.AreEqual(artistResponse, responseModel);
         }
+        
         [TestMethod()]
         public void GetArtistByIdTest_WithUnexistId_ReturnNotFound()
         {
-            mockService.Setup(service => service.GetArtist(no)).Returns((ArtistDto)null);
+            mockService.Setup(service => service.GetArtist(unexistId)).Returns((ArtistDto)null);
             //act
-            var result = controller.GetArtistById(no);
+            var result = controller.GetArtistById(unexistId);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -76,6 +78,7 @@ namespace Web_Music.Controllers.Tests
             Assert.AreEqual(artistsResponse, responseModel);
             Assert.IsNotNull(responseModel);
         }
+        
         [TestMethod()]
         public void GetAllArtistsTest_ReturnNotFound()
         {
@@ -98,6 +101,7 @@ namespace Web_Music.Controllers.Tests
 
             Assert.AreEqual(201, result.StatusCode);
         }
+        
         [TestMethod()]
         public void CreateArtistTest_WithNull_ReturnBadRequest()
         {
@@ -114,20 +118,21 @@ namespace Web_Music.Controllers.Tests
         {
             var artist = fixture.Create<ArtistDto>();
 
-            mockService.Setup(service => service.GetArtist(have)).Returns(artist);
+            mockService.Setup(service => service.GetArtist(existId)).Returns(artist);
 
-            var result = controller.DeleteArtist(have);
+            var result = controller.DeleteArtist(existId);
             var statusCode = result as NoContentResult;
 
             Assert.AreEqual(204, statusCode.StatusCode);
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
         }
+        
         [TestMethod()]
         public void DeleteArtistTest_WithUnexistId_ReturnNotFound()
         {
-            mockService.Setup(service => service.GetArtist(no)).Returns((ArtistDto)null);
+            mockService.Setup(service => service.GetArtist(unexistId)).Returns((ArtistDto)null);
 
-            var result = controller.DeleteArtist(no);
+            var result = controller.DeleteArtist(unexistId);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -140,7 +145,7 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<ArtistUpdateDto>(artistResponse)).Returns(artistUpdate);
 
-            var result = controller.UpdateArtist(have, artistResponse);
+            var result = controller.UpdateArtist(existId, artistResponse);
             var resultCode = result as NoContentResult;
 
             Assert.AreEqual(204, resultCode.StatusCode);

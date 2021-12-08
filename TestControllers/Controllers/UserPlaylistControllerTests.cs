@@ -21,7 +21,7 @@ namespace Web_Music.Controllers.Tests
 
         private UserPlaylistController controller;
 
-        private readonly int haveUser = 1, noUser = 0;
+        private readonly int existUser = 1, unexistUser = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -50,15 +50,16 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<PlaylistResponseModel>>(playlists)).Returns(playlistResponse);
 
-            mockUserService.Setup(service => service.GetUser(haveUser)).Returns(user);
-            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(haveUser)).Returns(playlists);
+            mockUserService.Setup(service => service.GetUser(existUser)).Returns(user);
+            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(existUser)).Returns(playlists);
             //act
-            var result = controller.GetAllPlaylistsByUser(haveUser) as OkObjectResult;
+            var result = controller.GetAllPlaylistsByUser(existUser) as OkObjectResult;
             var responseModel = result?.Value;
             //assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(responseModel);
             Assert.AreEqual(playlistResponse, responseModel);
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsByUserTest_WithUnexistUser_ReturnNotFound()
         {
@@ -72,13 +73,14 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<PlaylistResponseModel>>(playlists)).Returns(playlistResponse);
 
-            mockUserService.Setup(service => service.GetUser(noUser)).Returns((UserDto)null);
-            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(noUser)).Returns(playlists);
+            mockUserService.Setup(service => service.GetUser(unexistUser)).Returns((UserDto)null);
+            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(unexistUser)).Returns(playlists);
             //act
-            var result = controller.GetAllPlaylistsByUser(noUser);
+            var result = controller.GetAllPlaylistsByUser(unexistUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsByUserTest_WithUnexistPlaylists_ReturnNotFound()
         {
@@ -92,10 +94,10 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<PlaylistResponseModel>>(playlists)).Returns(playlistResponse);
 
-            mockUserService.Setup(service => service.GetUser(haveUser)).Returns(user);
-            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(haveUser)).Returns((IEnumerable<PlaylistDto>)null);
+            mockUserService.Setup(service => service.GetUser(existUser)).Returns(user);
+            mockPlaylistService.Setup(service => service.GetAllPlaylistsByUser(existUser)).Returns((IEnumerable<PlaylistDto>)null);
             //act
-            var result = controller.GetAllPlaylistsByUser(haveUser);
+            var result = controller.GetAllPlaylistsByUser(existUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -106,33 +108,35 @@ namespace Web_Music.Controllers.Tests
             var user = fixture.Create<UserDto>();
             var playlist = fixture.Create<PlaylistDto>();
 
-            mockUserService.Setup(service => service.GetUser(haveUser)).Returns(user);
-            mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns(playlist);
+            mockUserService.Setup(service => service.GetUser(existUser)).Returns(user);
+            mockPlaylistService.Setup(service => service.GetPlaylist(existUser)).Returns(playlist);
             //Act
-            var result = controller.AddPlaylistToUser(haveUser, haveUser) as StatusCodeResult;
+            var result = controller.AddPlaylistToUser(existUser, existUser) as StatusCodeResult;
             //assert
             Assert.AreEqual(201, result.StatusCode);
         }
+        
         [TestMethod()]
         public void AddPlaylistToUserTest_UnexistUserExistPlaylist_ReturnNotFouned()
         {
             var playlist = fixture.Create<PlaylistDto>();
 
-            mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns(playlist);
-            mockUserService.Setup(service => service.GetUser(noUser)).Returns((UserDto)null);
+            mockPlaylistService.Setup(service => service.GetPlaylist(existUser)).Returns(playlist);
+            mockUserService.Setup(service => service.GetUser(unexistUser)).Returns((UserDto)null);
             //act
-            var result = controller.AddPlaylistToUser(haveUser, haveUser) as StatusCodeResult;
+            var result = controller.AddPlaylistToUser(existUser, existUser) as StatusCodeResult;
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
+        
         [TestMethod()]
         public void AddPlaylistToUserTest_ExistUserUnexistPlaylist_ReturnNotFouned()
         {
             var user = fixture.Create<UserDto>();
-            mockUserService.Setup(service => service.GetUser(haveUser)).Returns(user);
-            mockPlaylistService.Setup(service => service.GetPlaylist(noUser)).Returns((PlaylistDto)null);
+            mockUserService.Setup(service => service.GetUser(existUser)).Returns(user);
+            mockPlaylistService.Setup(service => service.GetPlaylist(unexistUser)).Returns((PlaylistDto)null);
             //act
-            var result = controller.AddPlaylistToUser(haveUser, haveUser) as StatusCodeResult;
+            var result = controller.AddPlaylistToUser(existUser, existUser) as StatusCodeResult;
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -150,15 +154,16 @@ namespace Web_Music.Controllers.Tests
             var playlist = fixture.Create<PlaylistDto>();
 
             mapper.Setup(m => m.Map<IEnumerable<UserResponseModel>>(users)).Returns(userResponse);
-            mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns(playlist);
-            mockUserService.Setup(service => service.GetAllUsersByPlaylist(haveUser)).Returns(users);
+            mockPlaylistService.Setup(service => service.GetPlaylist(existUser)).Returns(playlist);
+            mockUserService.Setup(service => service.GetAllUsersByPlaylist(existUser)).Returns(users);
             //act
-            var result = controller.GetAllUsersByPlaylist(haveUser) as OkObjectResult;
+            var result = controller.GetAllUsersByPlaylist(existUser) as OkObjectResult;
             var responseModel = result?.Value;
             //assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(responseModel);
             Assert.AreEqual(userResponse, responseModel);
         }
+        
         [TestMethod()]
         public void GetAllUsersByPlaylistTest_WithUnexistPlaylist_ReturnNotFound()
         {
@@ -170,13 +175,14 @@ namespace Web_Music.Controllers.Tests
                             .With(x => x.Playlists.Count, userDTO.Playlists.Count)
                             .Create());
             mapper.Setup(m => m.Map<IEnumerable<UserResponseModel>>(users)).Returns(userResponse);
-            mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns((PlaylistDto)null);
-            mockUserService.Setup(service => service.GetAllUsersByPlaylist(haveUser)).Returns(users);
+            mockPlaylistService.Setup(service => service.GetPlaylist(existUser)).Returns((PlaylistDto)null);
+            mockUserService.Setup(service => service.GetAllUsersByPlaylist(existUser)).Returns(users);
             //act
-            var result = controller.GetAllUsersByPlaylist(noUser);
+            var result = controller.GetAllUsersByPlaylist(unexistUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
+        
         [TestMethod()]
         public void GetAllUsersByPlaylistTest_WithUnexistUsers_ReturnNotFound()
         {
@@ -190,10 +196,10 @@ namespace Web_Music.Controllers.Tests
             var playlist = fixture.Create<PlaylistDto>();
 
             mapper.Setup(m => m.Map<IEnumerable<UserResponseModel>>(users)).Returns(userResponse);
-            mockPlaylistService.Setup(service => service.GetPlaylist(haveUser)).Returns(playlist);
-            mockUserService.Setup(service => service.GetAllUsersByPlaylist(haveUser)).Returns((IEnumerable<UserDto>)null);
+            mockPlaylistService.Setup(service => service.GetPlaylist(existUser)).Returns(playlist);
+            mockUserService.Setup(service => service.GetAllUsersByPlaylist(existUser)).Returns((IEnumerable<UserDto>)null);
             //act
-            var result = controller.GetAllUsersByPlaylist(haveUser);
+            var result = controller.GetAllUsersByPlaylist(existUser);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }

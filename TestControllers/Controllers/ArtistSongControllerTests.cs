@@ -21,7 +21,7 @@ namespace Web_Music.Controllers.Tests
 
         private ArtistSongController controller;
 
-        private readonly int have = 1, no = 0;
+        private readonly int existId = 1, unexistId = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -52,15 +52,16 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<SongResponseModel>>(songs)).Returns(songsResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(have)).Returns(artist);
-            mockSongService.Setup(service => service.GetAllSongsByArtist(have)).Returns(songs);
+            mockArtistService.Setup(service => service.GetArtist(existId)).Returns(artist);
+            mockSongService.Setup(service => service.GetAllSongsByArtist(existId)).Returns(songs);
             //act
-            var result = controller.GetAllSongsByArtist(have) as OkObjectResult;
+            var result = controller.GetAllSongsByArtist(existId) as OkObjectResult;
             var responseModel = result?.Value;
             //assert
             Assert.AreEqual(songsResponse, responseModel);
             Assert.IsNotNull(responseModel);
         }
+        
         [TestMethod()]
         public void GetAllSongsByArtistTest_WithUnexistArtist_ReturnNotFound()
         {
@@ -74,13 +75,14 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<SongResponseModel>>(songs)).Returns(songsResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(no)).Returns((ArtistDto)null);
-            mockSongService.Setup(service => service.GetAllSongsByArtist(no)).Returns(songs);
+            mockArtistService.Setup(service => service.GetArtist(unexistId)).Returns((ArtistDto)null);
+            mockSongService.Setup(service => service.GetAllSongsByArtist(unexistId)).Returns(songs);
             //act
-            var result = controller.GetAllSongsByArtist(no);
+            var result = controller.GetAllSongsByArtist(unexistId);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
+        
         [TestMethod()]
         public void GetAllSongsByArtistTest_WithUnexistSongs_ReturnNotFound()
         {
@@ -95,10 +97,10 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<SongResponseModel>>(songs)).Returns(songsResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(have)).Returns(artist);
-            mockSongService.Setup(service => service.GetAllSongsByArtist(have)).Returns((IEnumerable<SongDto>)null);
+            mockArtistService.Setup(service => service.GetArtist(existId)).Returns(artist);
+            mockSongService.Setup(service => service.GetAllSongsByArtist(existId)).Returns((IEnumerable<SongDto>)null);
             //act
-            var result = controller.GetAllSongsByArtist(have);
+            var result = controller.GetAllSongsByArtist(existId);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }

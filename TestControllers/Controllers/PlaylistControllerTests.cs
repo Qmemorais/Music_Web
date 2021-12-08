@@ -20,7 +20,7 @@ namespace Web_Music.Controllers.Tests
 
         private PlaylistController controller;
 
-        private readonly int havePlaylist = 1, noPlaylist = 0;
+        private readonly int existPlaylist = 1, unexistPlaylist = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -44,14 +44,14 @@ namespace Web_Music.Controllers.Tests
                 Name = playlist.Name
             };
 
-            mockService.Setup(service=>service.GetPlaylist(havePlaylist)).Returns(playlist);
+            mockService.Setup(service=>service.GetPlaylist(existPlaylist)).Returns(playlist);
             mapper.Setup(m => m.Map<PlaylistResponseModel>(playlist)).Returns(playlistResponse);
 
             //act
-            var result = controller.GetPlaylistById(havePlaylist) as OkObjectResult;
+            var result = controller.GetPlaylistById(existPlaylist) as OkObjectResult;
             var responseModel = (PlaylistResponseModel)result?.Value;
             //assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(responseModel);
             Assert.AreEqual(playlistResponse, responseModel);
         }
 
@@ -59,9 +59,9 @@ namespace Web_Music.Controllers.Tests
         public void GetPlaylistByIdTest_WithUnexistId_ReturnNotFound()
         {
             //arange
-            mockService.Setup(service => service.GetPlaylist(noPlaylist)).Returns((PlaylistDto)null);
+            mockService.Setup(service => service.GetPlaylist(unexistPlaylist)).Returns((PlaylistDto)null);
             //act
-            var result = controller.GetPlaylistById(noPlaylist);
+            var result = controller.GetPlaylistById(unexistPlaylist);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -81,9 +81,10 @@ namespace Web_Music.Controllers.Tests
 
             var responseModel = result?.Value;
             //assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(responseModel);
             Assert.AreEqual(playlistsResponse, responseModel);
         }
+        
         [TestMethod()]
         public void GetAllPlaylistTest_ReturnNotFound()
         {
@@ -110,6 +111,7 @@ namespace Web_Music.Controllers.Tests
 
             Assert.AreEqual(201, result.StatusCode);
         }
+        
         [TestMethod()]
         public void CreatePlaylistTest_WithNullModel_ReturnBadRequest()
         {
@@ -125,20 +127,21 @@ namespace Web_Music.Controllers.Tests
         public void DeletePlaylistTest_WithExistId_ReturnNoContent()
         {
             var playlist = fixture.Create<PlaylistDto>();
-            mockService.Setup(service => service.GetPlaylist(havePlaylist)).Returns(playlist);
+            mockService.Setup(service => service.GetPlaylist(existPlaylist)).Returns(playlist);
 
-            var result = controller.DeletePlaylist(havePlaylist);
+            var result = controller.DeletePlaylist(existPlaylist);
             var resultCode = result as NoContentResult;
 
             Assert.AreEqual(204, resultCode.StatusCode);
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
         }
+        
         [TestMethod()]
         public void DeletePlaylistTest_WithUnexistId_ReturnNotFound()
         {
-            mockService.Setup(service => service.GetPlaylist(noPlaylist)).Returns((PlaylistDto)null);
+            mockService.Setup(service => service.GetPlaylist(unexistPlaylist)).Returns((PlaylistDto)null);
 
-            var result = controller.DeletePlaylist(noPlaylist);
+            var result = controller.DeletePlaylist(unexistPlaylist);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -154,9 +157,9 @@ namespace Web_Music.Controllers.Tests
             };
 
             mapper.Setup(m => m.Map<PlaylistUpdateDto>(playlistResponse)).Returns(playlistUpdate);
-            mockService.Setup(service => service.GetPlaylist(havePlaylist)).Returns(playlist);
+            mockService.Setup(service => service.GetPlaylist(existPlaylist)).Returns(playlist);
 
-            var result = controller.UpdatePlaylist(havePlaylist, playlistResponse);
+            var result = controller.UpdatePlaylist(existPlaylist, playlistResponse);
             var resultCode = result as NoContentResult;
 
             Assert.AreEqual(204, resultCode.StatusCode);

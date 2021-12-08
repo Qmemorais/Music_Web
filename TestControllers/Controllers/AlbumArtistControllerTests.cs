@@ -22,7 +22,7 @@ namespace Web_Music.Controllers.Tests
 
         private AlbumArtistController controller;
 
-        private readonly int have = 1, no = 0;
+        private readonly int existId = 1, unexistId = 0;
 
         [TestInitialize]
         public void Initialize()
@@ -50,10 +50,10 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<AlbumResponseModel>>(albums)).Returns(albumResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(have)).Returns(artist);
-            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(have)).Returns(albums);
+            mockArtistService.Setup(service => service.GetArtist(existId)).Returns(artist);
+            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(existId)).Returns(albums);
             //act
-            var result = controller.GetAllAlbumsByArtist(have) as OkObjectResult;
+            var result = controller.GetAllAlbumsByArtist(existId) as OkObjectResult;
             var responseModel = result?.Value;
             //assert
             Assert.IsNotNull(responseModel);
@@ -72,10 +72,10 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<AlbumResponseModel>>(albums)).Returns(albumResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(have)).Returns(artist);
-            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(have)).Returns((IEnumerable<AlbumDto>)null);
+            mockArtistService.Setup(service => service.GetArtist(existId)).Returns(artist);
+            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(existId)).Returns((IEnumerable<AlbumDto>)null);
             //act
-            var result = controller.GetAllAlbumsByArtist(have);
+            var result = controller.GetAllAlbumsByArtist(existId);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -91,10 +91,10 @@ namespace Web_Music.Controllers.Tests
 
             mapper.Setup(m => m.Map<IEnumerable<AlbumResponseModel>>(albums)).Returns(albumResponse);
 
-            mockArtistService.Setup(service => service.GetArtist(no)).Returns((ArtistDto)null);
-            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(no)).Returns(albums);
+            mockArtistService.Setup(service => service.GetArtist(unexistId)).Returns((ArtistDto)null);
+            mockAlbumService.Setup(service => service.GetAllAlbumsByArtist(unexistId)).Returns(albums);
             //act
-            var result = controller.GetAllAlbumsByArtist(no);
+            var result = controller.GetAllAlbumsByArtist(unexistId);
             //assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
