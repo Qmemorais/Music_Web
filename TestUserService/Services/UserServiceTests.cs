@@ -51,11 +51,11 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             service.AddPlaylistToUser(userId,playlistId);
             //assert
@@ -81,9 +81,9 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             context.Setup(x => x.Users).Returns((DbSet<User>)null);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.AddPlaylistToUser(userId, playlistId));
@@ -101,10 +101,10 @@ namespace BusinessLayer.Services.Tests
 
             var playlistId = fixture.Create<int>();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
             context.Setup(x => x.Playlists).Returns((DbSet<Playlist>)null);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.AddPlaylistToUser(userId, playlistId));
         }
@@ -126,13 +126,15 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetUser = CreateDbSetMock(user);
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //assert
             service.AddPlaylistToUser(userId, playlistId);
+            context.Verify(x => x.Update(user), Times.Never);
+            context.Verify(x => x.Update(playlist), Times.Never);
             context.Verify(x => x.SaveChanges(), Times.Never());
         }
 
@@ -146,7 +148,7 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
             var mappedUsers = user.Select(userDTO => fixture.Build<UserDto>()
                             .With(x => x.Name, userDTO.Name)
@@ -155,11 +157,10 @@ namespace BusinessLayer.Services.Tests
                             .Create());
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<UserDto>>(user)).Returns(mappedUsers);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             var users = service.GetAllUsers();
             //assert
-            Assert.IsInstanceOfType(users, typeof(IEnumerable<UserDto>));
             Assert.IsNotNull(users);
             Assert.AreEqual(mappedUsers.Count(), users.Count());
             Assert.AreEqual(mappedUsers.ElementAt(0).Email, users.ElementAt(0).Email);
@@ -184,8 +185,8 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
 
             var mappedUsers = user.Select(userDTO => fixture.Build<UserDto>()
                             .With(x => x.Name, userDTO.Name)
@@ -195,12 +196,11 @@ namespace BusinessLayer.Services.Tests
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<UserDto>>(user)).Returns(mappedUsers);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             var result = service.GetAllUsersByPlaylist(playlistId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(IEnumerable<UserDto>));
             Assert.IsNotNull(result);
             Assert.AreEqual(mappedUsers.Count(), result.Count());
             Assert.AreEqual(mappedUsers.ElementAt(0).Email, result.ElementAt(0).Email);
@@ -220,9 +220,9 @@ namespace BusinessLayer.Services.Tests
 
             var playlistId = fixture.Create<int>();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             var result = service.GetAllUsersByPlaylist(playlistId);
             //assert 
@@ -258,15 +258,15 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Surname, userDTO.Surname)
                             .Create()).First();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
             mapper.Setup(mapper => mapper.Map<UserDto>(user.First())).Returns(mappedUser);
 
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             var result = service.GetUser(userId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(UserDto));
+            Assert.IsNotNull(result);
             Assert.AreEqual(mappedUser.Email, result.Email);
             Assert.AreEqual(mappedUser.Name, result.Name);
             Assert.AreEqual(mappedUser.Surname, result.Surname);
@@ -288,12 +288,13 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Surname, userCreateDTO.Surname)
                             .Create()).First();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
             mapper.Setup(mapper => mapper.Map<User>(userToCreate)).Returns(user.First());
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //assert 
             service.CreateUser(userToCreate);
+            context.Verify(x => x.Users.Add(user.First()), Times.Never());
             context.Verify(x=>x.SaveChanges(),Times.Never());
         }
         
@@ -314,10 +315,10 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Surname, userToCreateNew.Surname)
                             .Create();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
             mapper.Setup(mapper => mapper.Map<User>(userToCreateNew)).Returns(userModel);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             service.CreateUser(userToCreateNew);
             //assert 
@@ -340,9 +341,9 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Surname, userDTO.Surname)
                             .Create()).First();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             service.UpdateUser(userId, mappedUserUpdate);
             //assert 
@@ -378,9 +379,9 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetUser = CreateDbSetMock(user);
 
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             service.DeleteUser(userId);
             //assert 

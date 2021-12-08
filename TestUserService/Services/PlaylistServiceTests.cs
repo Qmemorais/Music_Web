@@ -50,16 +50,18 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetSong = CreateDbSetMock(song);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetSong = CreateDbSetMock(song);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Songs).Returns(DbSetSong.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Songs).Returns(dbSetSong.Object);
             //act
             service.AddSongToPlaylist(playlistId,songId);
             //assert
+            context.Verify(x => x.Playlists.Update(playlist.First()));
             context.Verify(x => x.SaveChanges());
         }
+        
         [TestMethod()]
         public void AddSongToPlaylistTest_WithUnexistSong()
         {
@@ -72,13 +74,14 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //act
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.AddSongToPlaylist(playlistId,songId));
         }
+        
         [TestMethod()]
         public void AddSongToPlaylistTest_WithUnexistPlaylist()
         {
@@ -91,13 +94,14 @@ namespace BusinessLayer.Services.Tests
 
             var playlistId = fixture.Create<int>();
 
-            var DbSetSong = CreateDbSetMock(song);
+            var dbSetSong = CreateDbSetMock(song);
 
-            context.Setup(x => x.Songs).Returns(DbSetSong.Object);
+            context.Setup(x => x.Songs).Returns(dbSetSong.Object);
             //act
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.AddSongToPlaylist(playlistId, songId));
         }
+        
         [TestMethod()]
         public void AddSongToPlaylistTest_WichAlreadyExist()
         {
@@ -115,13 +119,14 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetSong = CreateDbSetMock(song);
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetSong = CreateDbSetMock(song);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Songs).Returns(DbSetSong.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Songs).Returns(dbSetSong.Object);
             //assert
             service.AddSongToPlaylist(playlistId,songId);
+            context.Verify(x => x.Playlists.Update(playlist.First()),Times.Never());
             context.Verify(x => x.SaveChanges(), Times.Never());
         }
 
@@ -145,16 +150,18 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.UserId, playlistCreateDTO.Users[0].Id)
                             .Create()).First();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
 
             mapper.Setup(mapper => mapper.Map<Playlist>(playlistToCreate)).Returns(playlist.First());
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //assert 
             service.CreatePlaylist(playlistToCreate);
+            context.Verify(x => x.Playlists.Add(playlist.First()), Times.Never());
             context.Verify(x => x.SaveChanges(), Times.Never());
         }
+        
         [TestMethod()]
         public void CreatePlaylistTest_WithUnexistName_ReturnCreated()
         {
@@ -175,17 +182,19 @@ namespace BusinessLayer.Services.Tests
             var playlistModel = fixture.Build<Playlist>()
                     .With(x => x.Name, playlistToCreateNew.Name).Create();
 
-            var DbSetUser = CreateDbSetMock(user);
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
             mapper.Setup(mapper => mapper.Map<Playlist>(playlistToCreateNew)).Returns(playlistModel);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //act
             service.CreatePlaylist(playlistToCreateNew);
             //assert 
+            context.Verify(x => x.Playlists.Add(playlistModel));
             context.Verify(x => x.SaveChanges());
         }
+        
         [TestMethod()]
         public void CreatePlaylistTest_WithUnexistUser_ReturnException()
         {
@@ -201,10 +210,10 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.UserId, playlistCreateDTO.Users[0].Id)
                             .Create()).First();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
             mapper.Setup(mapper => mapper.Map<Playlist>(playlistToCreate)).Returns(playlist.First());
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
 
             Assert.ThrowsException<ArgumentNullException>(() => service.CreatePlaylist(playlistToCreate));
         }
@@ -219,14 +228,16 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //act
             service.DeletePlaylist(playlistId);
             //assert 
+            context.Verify(x => x.Playlists.Remove(playlist.First()));
             context.Verify(x => x.SaveChanges());
         }
+        
         [TestMethod()]
         public void DeletePlaylistTest_WithUnexistId_ReturnException()
         {
@@ -248,22 +259,22 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
             var mappedPlaylist = playlist.Select(playlistDTO => fixture.Build<PlaylistDto>()
                             .With(x => x.Name, playlistDTO.Name)
                             .Create());
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<PlaylistDto>>(playlist)).Returns(mappedPlaylist);
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //act
             var playlists = service.GetAllPlaylists();
             //assert
-            Assert.IsInstanceOfType(playlists, typeof(IEnumerable<PlaylistDto>));
             Assert.IsNotNull(playlists);
             Assert.AreEqual(mappedPlaylist.Count(), playlists.Count());
             Assert.AreEqual(mappedPlaylist.ElementAt(0).Name, playlists.ElementAt(0).Name);
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsTest_WithunexistModels_ReturnException()
         {
@@ -289,8 +300,8 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetSong = CreateDbSetMock(song);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetSong = CreateDbSetMock(song);
 
             var mappedPlaylist = playlist.Select(playlistDTO => fixture.Build<PlaylistDto>()
                             .With(x => x.Name, playlistDTO.Name)
@@ -298,16 +309,16 @@ namespace BusinessLayer.Services.Tests
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<PlaylistDto>>(playlist)).Returns(mappedPlaylist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Songs).Returns(DbSetSong.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Songs).Returns(dbSetSong.Object);
             //act
             var result = service.GetAllPlaylistsBySong(songId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(IEnumerable<PlaylistDto>));
             Assert.IsNotNull(result);
             Assert.AreEqual(mappedPlaylist.Count(), result.Count());
             Assert.AreEqual(mappedPlaylist.ElementAt(0).Name, result.ElementAt(0).Name);
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsBySongTest_WithUnexistSong_ReturnException()
         {
@@ -319,16 +330,17 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
             var mappedPlaylist = playlist.Select(playlistDTO => fixture.Build<PlaylistDto>()
                             .With(x => x.Name, playlistDTO.Name)
                             .Create());
             mapper.Setup(mapper => mapper.Map<IEnumerable<PlaylistDto>>(playlist)).Returns(mappedPlaylist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.GetAllPlaylistsBySong(songId));
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsBySongTest_WithUnexistPlaylist_ReturnException()
         {
@@ -339,8 +351,8 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetSong = CreateDbSetMock(song);
-            context.Setup(x => x.Songs).Returns(DbSetSong.Object);
+            var dbSetSong = CreateDbSetMock(song);
+            context.Setup(x => x.Songs).Returns(dbSetSong.Object);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.GetAllPlaylistsBySong(songId));
         }
@@ -362,8 +374,8 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
-            var DbSetUser = CreateDbSetMock(user);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(user);
 
             var mappedPlaylist = playlist.Select(playlistDTO => fixture.Build<PlaylistDto>()
                             .With(x => x.Name, playlistDTO.Name)
@@ -371,16 +383,16 @@ namespace BusinessLayer.Services.Tests
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<PlaylistDto>>(playlist)).Returns(mappedPlaylist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //act
             var result = service.GetAllPlaylistsByUser(userId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(IEnumerable<PlaylistDto>));
             Assert.IsNotNull(result);
             Assert.AreEqual(mappedPlaylist.Count(), result.Count());
             Assert.AreEqual(mappedPlaylist.ElementAt(0).Name, result.ElementAt(0).Name);
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsByUserTest_WithUnexistUser_ReturnException()
         {
@@ -392,16 +404,17 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
             var mappedPlaylist = playlist.Select(playlistDTO => fixture.Build<PlaylistDto>()
                             .With(x => x.Name, playlistDTO.Name)
                             .Create());
             mapper.Setup(mapper => mapper.Map<IEnumerable<PlaylistDto>>(playlist)).Returns(mappedPlaylist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.GetAllPlaylistsByUser(userId));
         }
+        
         [TestMethod()]
         public void GetAllPlaylistsByUserTest_WithUnexistPlaylist_ReturnException()
         {
@@ -412,8 +425,8 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetUser = CreateDbSetMock(user);
-            context.Setup(x => x.Users).Returns(DbSetUser.Object);
+            var dbSetUser = CreateDbSetMock(user);
+            context.Setup(x => x.Users).Returns(dbSetUser.Object);
             //assert
             Assert.ThrowsException<ArgumentNullException>(() => service.GetAllPlaylistsByUser(userId));
         }
@@ -428,6 +441,7 @@ namespace BusinessLayer.Services.Tests
             //assert 
             Assert.ThrowsException<ArgumentNullException>(() => service.GetPlaylist(playlistId));
         }
+        
         [TestMethod()]
         public void GetPlaylistTest_WithExistId_ReturnModel()
         {
@@ -442,15 +456,15 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Name, userDTO.Name)
                             .Create()).First();
 
-            var DbSetUser = CreateDbSetMock(playlist);
+            var dbSetUser = CreateDbSetMock(playlist);
 
             mapper.Setup(mapper => mapper.Map<PlaylistDto>(playlist.First())).Returns(mappedPlaylist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetUser.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetUser.Object);
             //act
             var result = service.GetPlaylist(playlistId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(PlaylistDto));
+            Assert.IsNotNull(result);
             Assert.AreEqual(mappedPlaylist.Name, result.Name);
         }
 
@@ -467,14 +481,16 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Name, userDTO.Name)
                             .Create()).First();
 
-            var DbSetPlaylist = CreateDbSetMock(playlist);
+            var dbSetPlaylist = CreateDbSetMock(playlist);
 
-            context.Setup(x => x.Playlists).Returns(DbSetPlaylist.Object);
+            context.Setup(x => x.Playlists).Returns(dbSetPlaylist.Object);
             //act
             service.UpdatePlaylist(playlistId, mappedPlaylistUpdate);
             //assert 
+            context.Verify(x => x.Playlists.Update(playlist.First()));
             context.Verify(x => x.SaveChanges());
         }
+        
         [TestMethod()]
         public void UpdatePlaylistTest_WithUnexistId_ReturnFalse()
         {

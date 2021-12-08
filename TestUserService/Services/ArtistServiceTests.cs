@@ -47,14 +47,16 @@ namespace BusinessLayer.Services.Tests
             var artistToCreate = artist.Select(userCreateDTO => fixture.Build<ArtistCreateDto>()
                             .Create()).First();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
             mapper.Setup(mapper => mapper.Map<Artist>(artistToCreate)).Returns(artist.First());
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //assert 
             service.CreateArtist(artistToCreate);
+            context.Verify(x => x.Artists.Add(artist.First()), Times.Never());
             context.Verify(x => x.SaveChanges(), Times.Never());
         }
+        
         [TestMethod()]
         public void CreateArtistTest_WithUnexistName_ReturnCreated()
         {
@@ -70,13 +72,14 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Name, artistToCreateNew.Name)
                             .Create();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
             mapper.Setup(mapper => mapper.Map<Artist>(artistToCreateNew)).Returns(artistModel);
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //act
             service.CreateArtist(artistToCreateNew);
             //assert 
+            context.Verify(x => x.Artists.Add(artistModel));
             context.Verify(x => x.SaveChanges());
         }
 
@@ -90,14 +93,16 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //act
             service.DeleteArtist(artistId);
             //assert 
+            context.Verify(x => x.Artists.Remove(artist.First()));
             context.Verify(x => x.SaveChanges());
         }
+        
         [TestMethod()]
         public void DeleteArtistTest_WithUneistId_ReturnFalse()
         {
@@ -119,18 +124,17 @@ namespace BusinessLayer.Services.Tests
                 .CreateMany(1)
                 .ToList();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
             var mappedArtist = artist.Select(artistDTO => fixture.Build<ArtistDto>()
                             .With(x=>x.Name, artistDTO.Name)
                             .Create());
 
             mapper.Setup(mapper => mapper.Map<IEnumerable<ArtistDto>>(artist)).Returns(mappedArtist);
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //act
             var users = service.GetAllArtists();
             //assert
-            Assert.IsInstanceOfType(users, typeof(IEnumerable<ArtistDto>));
             Assert.IsNotNull(users);
             Assert.AreEqual(mappedArtist.Count(), users.Count());
             Assert.AreEqual(mappedArtist.ElementAt(0).Name, users.ElementAt(0).Name);
@@ -146,6 +150,7 @@ namespace BusinessLayer.Services.Tests
             //assert 
             Assert.ThrowsException<ArgumentNullException>(() => service.GetArtist(artistId));
         }
+        
         [TestMethod()]
         public void GetArtistTest_WithExistId_ReturnExistModel()
         {
@@ -160,15 +165,15 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Name, artistDTO.Name)
                             .Create()).First();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
             mapper.Setup(mapper => mapper.Map<ArtistDto>(artist.First())).Returns(mappedArtist);
 
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //act
             var result = service.GetArtist(artistId);
             //assert 
-            Assert.IsInstanceOfType(result, typeof(ArtistDto));
+            Assert.IsNotNull(result);
             Assert.AreEqual(mappedArtist.Name, result.Name);
         }
 
@@ -187,6 +192,7 @@ namespace BusinessLayer.Services.Tests
             //assert 
             Assert.ThrowsException<ArgumentNullException>(() => service.UpdateArtist(artistId, mappedArtistUpdate));
         }
+        
         [TestMethod()]
         public void UpdateArtistTest_WithExistId_ReturnTrue()
         {
@@ -200,12 +206,13 @@ namespace BusinessLayer.Services.Tests
                             .With(x => x.Name, artistDTO.Name)
                             .Create()).First();
 
-            var DbSetArtist = CreateDbSetMock(artist);
+            var dbSetArtist = CreateDbSetMock(artist);
 
-            context.Setup(x => x.Artists).Returns(DbSetArtist.Object);
+            context.Setup(x => x.Artists).Returns(dbSetArtist.Object);
             //act
             service.UpdateArtist(artistId, mappedArtistUpdate);
             //assert 
+            context.Verify(x => x.Artists.Update(artist.First()));
             context.Verify(x => x.SaveChanges());
         }
 
