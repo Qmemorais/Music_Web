@@ -1,13 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
     public class Song
     {
-        public int Id { get; set; }
-        public string Name { get ; set ; }
-        public string Time { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Title { get ; set ; }
+        [Required]
+        public string Genre { get; set; }
+        [Required]
+        public DateTime Time { get; set; }
+        [Required]
         public int ArtistId { get; set; }
+        [Required]
         public int AlbumId { get; set; }
         public virtual List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
