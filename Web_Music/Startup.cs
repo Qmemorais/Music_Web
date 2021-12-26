@@ -1,5 +1,5 @@
-using BusinessLayer.Services;
-using BusinessLayer.Services.Interface;
+//using BusinessLayer.Services;
+//using BusinessLayer.Services.Interface;
 using DataLayer.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,13 +16,13 @@ namespace Web_Music
             services.AddDbContext<MusicContext>(options => 
             options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=musicdb;Trusted_Connection=True;"));
             //add automapper to protect models
-            services.AddAutoMapper(typeof(Startup).Assembly);
+            /*services.AddAutoMapper(typeof(Startup).Assembly);
             //add services to work with models
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IArtistService, ArtistService>();
-            services.AddScoped<IAlbumService, AlbumService>();
+            services.AddScoped<IAlbumService, AlbumService>();*/
             //add controllers
             services.AddControllers();
             //add swagger
