@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web_Music", "Web_Music\Web_Music.csproj", "{6DEB2230-C918-44F7-A6B8-6DC12CF0362E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataL\DataLayer.csproj", "{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{FCD6B545-F22D-4F57-AA39-D2028FD709B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC21F2DF-12FF-4FCC-BE33-F1A39F5832C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCD6B545-F22D-4F57-AA39-D2028FD709B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCD6B545-F22D-4F57-AA39-D2028FD709B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCD6B545-F22D-4F57-AA39-D2028FD709B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCD6B545-F22D-4F57-AA39-D2028FD709B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
