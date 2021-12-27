@@ -13,9 +13,9 @@ namespace DataLayer.Models
         [Required]
         public DateTime Time { get; set; }
         [Required]
-        public int ArtistId { get; set; }
+        public Guid ArtistId { get; set; }
         [Required]
-        public int AlbumId { get; set; }
+        public Guid AlbumId { get; set; }
         public virtual List<Playlist> Playlists { get; set; } = new List<Playlist>();
     }
 }
