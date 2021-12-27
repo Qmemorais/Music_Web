@@ -7,7 +7,7 @@ namespace BusinessLayer.Services.Interfaces
     public interface IPlaylistService
     {
         public void CreatePlaylist(PlaylistCreateDTO playlistCreate);
-        public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate);
+        public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate, Guid id);
         public void DeletePlaylist(Guid id);
         public List<PlaylistDTOToGet> GetPlaylists();
         public PlaylistDTOToGet GetPlaylistById(Guid id);

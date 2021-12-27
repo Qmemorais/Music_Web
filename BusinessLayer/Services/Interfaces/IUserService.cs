@@ -7,7 +7,7 @@ namespace BusinessLayer.Services.Interfaces
     public interface IUserService
     {
         public void CreateUser(UserCreateDTO userCreate);
-        public void UpdateUser(UserUpdateDTO userUpdate);
+        public void UpdateUser(UserUpdateDTO userUpdate, Guid id);
         public void DeleteUser(Guid id);
         public List<UserDTOToGet> GetUsers();
         public UserDTOToGet GetUserById(Guid id);
