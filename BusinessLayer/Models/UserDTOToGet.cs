@@ -11,6 +11,6 @@ namespace BusinessLayer.Models
         public int Age { get; set; }
         public string Country { get; set; }
         public string Email { get; set; }
-        List<PlaylistDTO> Playlists { get; set; }
+        public List<PlaylistDTO> Playlists { get; set; }
     }
 }
