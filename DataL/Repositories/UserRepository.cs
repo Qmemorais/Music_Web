@@ -40,7 +40,7 @@ namespace DataLayer.Repositories
 
         public User Get(Guid id)
         {
-            return db.Users.Find(id);
+            return db.Users.Include(u => u.Playlists).First(u => u.Id == id);
         }
 
         public IEnumerable<User> GetAll()
