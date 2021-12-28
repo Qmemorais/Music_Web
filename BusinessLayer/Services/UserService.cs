@@ -76,22 +76,52 @@ namespace BusinessLayer.Services
 
         public List<UserDTOToGet> GetUsers()
         {
-            throw new NotImplementedException();
+            var users = _uow.Users.GetAll();
+            var mappedUsers = _mapper.Map<IEnumerable<UserDTOToGet>>(users).ToList();
+            return mappedUsers;
         }
 
         public List<UserDTOToGet> GetUsersByAge(int age)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var usersByAge = _uow.Users.Find(u => u.Age == age);
+                var mappedUsers = _mapper.Map<IEnumerable<UserDTOToGet>>(usersByAge).ToList();
+                return mappedUsers;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<UserDTOToGet> GetUsersByCountry(string countryName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var usersByCountry = _uow.Users.Find(u => u.Country == countryName);
+                var mappedUsers = _mapper.Map<IEnumerable<UserDTOToGet>>(usersByCountry).ToList();
+                return mappedUsers;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<UserDTOToGet> GetUsersByPlaylist(Guid playlistId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var playlistToGetUsers = _uow.Playlists.Get(playlistId);
+                var usersByPlaylist = _uow.Users.Find(u => u.Playlists.Contains(playlistToGetUsers));
+                var mappedUsers = _mapper.Map<IEnumerable<UserDTOToGet>>(usersByPlaylist).ToList();
+                return mappedUsers;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void UpdateUser(UserUpdateDTO userUpdate, Guid id)
