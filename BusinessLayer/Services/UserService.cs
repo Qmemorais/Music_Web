@@ -60,12 +60,12 @@ namespace BusinessLayer.Services
             }
         }
 
-        public UserDTO GetUserById(Guid id)
+        public UserDTOToGet GetUserById(Guid id)
         {
             try
             {
                 var userFromContext = _uow.Users.Get(id);
-                var mappedUser = _mapper.Map<UserDTO>(userFromContext);
+                var mappedUser = _mapper.Map<UserDTOToGet>(userFromContext);
                 return mappedUser;
             }
             catch (Exception)
