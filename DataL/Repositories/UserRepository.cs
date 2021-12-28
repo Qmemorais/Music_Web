@@ -10,11 +10,11 @@ namespace DataLayer.Repositories
 {
     public class UserRepository : IRepository<User>
     {
-        private MusicContext db;
+        private readonly MusicContext db;
 
         public UserRepository(MusicContext context)
         {
-            this.db = context;
+            db = context;
         }
         public void Create(User user)
         {
@@ -26,7 +26,7 @@ namespace DataLayer.Repositories
             db.Entry(user).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
             User user = db.Users.Find(id);
             if (user != null)
@@ -38,7 +38,7 @@ namespace DataLayer.Repositories
             return db.Users.Include(u => u.Playlists).Where(predicate).ToList();
         }
 
-        public User Get(int id)
+        public User Get(Guid id)
         {
             return db.Users.Find(id);
         }
