@@ -3,7 +3,7 @@ using System;
 
 namespace DataLayer.Interfaces
 {
-    interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         IRepository<User> Users { get; }
         IRepository<Playlist> Playlists { get; }
