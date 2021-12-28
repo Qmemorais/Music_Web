@@ -22,7 +22,18 @@ namespace BusinessLayer.Services
 
         public void AddPlaylistToUser(Guid userId, Guid playlistId)
         {
-            throw new NotImplementedException();
+            var playlist = _uow.Playlists.Get(playlistId);
+            var user = _uow.Users.Get(userId);
+            var isPlaylistExistInUser = user.Playlists.Any(p => p.Id == playlistId);
+
+            if (!isPlaylistExistInUser)
+            {
+                user.Playlists.Add(playlist);
+                playlist.Users.Add(user);
+                _uow.Users.Update(user);
+                _uow.Playlists.Update(playlist);
+                _uow.Save();
+            }
         }
 
         public void CreateUser(UserCreateDTO userCreate)
@@ -49,9 +60,18 @@ namespace BusinessLayer.Services
             }
         }
 
-        public UserDTOToGet GetUserById(Guid id)
+        public UserDTO GetUserById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var userFromContext = _uow.Users.Get(id);
+                var mappedUser = _mapper.Map<UserDTO>(userFromContext);
+                return mappedUser;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<UserDTOToGet> GetUsers()
