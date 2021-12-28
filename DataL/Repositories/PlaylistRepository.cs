@@ -41,7 +41,7 @@ namespace DataLayer.Repositories
 
         public Playlist Get(Guid id)
         {
-            return db.Playlists.Find(id);
+            return db.Playlists.Include(p => p.Users).Include(p => p.Songs).First(p => p.Id == id);
         }
 
         public IEnumerable<Playlist> GetAll()
