@@ -19,5 +19,40 @@ namespace BusinessLayer.Services
             _mapper = mapper;
             _uow = uow;
         }
+
+        public void CreateAlbum(AlbumCreateDTO albumCreate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAlbum(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AlbumDTOToGet GetAlbumById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<AlbumDTOToGet> GetAlbums()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<AlbumDTOToGet> GetAllAlbumsByArtist(Guid artistId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<AlbumDTOToGet> GetAllAlbumsByTime(DateTime time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateAlbum(AlbumUpdateDTO albumUpdate, Guid albumId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
