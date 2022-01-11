@@ -38,12 +38,25 @@ namespace BusinessLayer.Services
 
         public void CreatePlaylist(PlaylistCreateDTO playlistCreate)
         {
-            throw new NotImplementedException();
+            var mappedPlaylist = _mapper.Map<Playlist>(playlistCreate);
+            var anyPlaylistName = _uow.Playlists.Find(p=>p.Name==playlistCreate.Name).First();
+
+            if (anyPlaylistName == null)
+            {
+                _uow.Playlists.Create(mappedPlaylist);
+                _uow.Save();
+            }
         }
 
         public void DeletePlaylist(Guid id)
         {
-            throw new NotImplementedException();
+            var playlist = _uow.Playlists.Get(id);
+
+            if (playlist != null)
+            {
+                _uow.Playlists.Delete(id);
+                _uow.Save();
+            }
         }
 
         public List<PlaylistDTOToGet> GetAllPlaylistsBySong(Guid songId)
@@ -82,7 +95,16 @@ namespace BusinessLayer.Services
 
         public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate, Guid id)
         {
-            throw new NotImplementedException();
+            var playlist = _uow.Playlists.Get(id);
+
+            if (playlist != null)
+                if (playlist.Name != playlistUpdate.Name)
+                {
+                    var anyPlaylistName = _uow.Playlists.Find(p => p.Name == playlistUpdate.Name).First();
+
+                    if (anyPlaylistName == null)
+                        playlist.Name = playlistUpdate.Name;
+                }
         }
     }
 }
