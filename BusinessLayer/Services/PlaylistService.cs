@@ -22,7 +22,18 @@ namespace BusinessLayer.Services
 
         public void AddSongToPlaylist(Guid playlistId, Guid songId)
         {
-            throw new NotImplementedException();
+            var song = _uow.Songs.Get(songId);
+            var playlist = _uow.Playlists.Get(playlistId);
+            var isSongExistInPlaylist = playlist.Songs.Any(s => s.Id == songId);
+            
+            if (!isSongExistInPlaylist)
+            {
+                playlist.Songs.Add(song);
+                song.Playlists.Add(playlist);
+                _uow.Playlists.Update(playlist);
+                _uow.Songs.Update(song);
+                _uow.Save();
+            }
         }
 
         public void CreatePlaylist(PlaylistCreateDTO playlistCreate)
@@ -52,7 +63,16 @@ namespace BusinessLayer.Services
 
         public PlaylistDTOToGet GetPlaylistById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var playlistFromDB = _uow.Playlists.Get(id);
+                var mappedPlaylist = _mapper.Map<PlaylistDTOToGet>(playlistFromDB);
+                return mappedPlaylist;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<PlaylistDTOToGet> GetPlaylists()
