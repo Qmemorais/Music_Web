@@ -19,5 +19,50 @@ namespace BusinessLayer.Services
             _mapper = mapper;
             _uow = uow;
         }
+
+        public void AddSongToPlaylist(Guid playlistId, Guid songId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreatePlaylist(PlaylistCreateDTO playlistCreate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeletePlaylist(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PlaylistDTOToGet> GetAllPlaylistsBySong(Guid songId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PlaylistDTOToGet> GetAllPlaylistsByTime(DateTime time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PlaylistDTOToGet> GetAllPlaylistsByUser(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PlaylistDTOToGet GetPlaylistById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PlaylistDTOToGet> GetPlaylists()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate, Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
