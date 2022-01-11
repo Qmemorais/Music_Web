@@ -45,22 +45,31 @@ namespace BusinessLayer.Services
 
         public List<SongDTOToGet> GetAllSongsByAlbum(Guid AlbumId)
         {
-            throw new NotImplementedException();
+            var songsByAlbum = _uow.Songs.Find(s => s.AlbumId == AlbumId);
+            var mappedSongs = _mapper.Map<IEnumerable<SongDTOToGet>>(songsByAlbum).ToList();
+            return mappedSongs;
         }
 
         public List<SongDTOToGet> GetAllSongsByArtist(Guid artistId)
         {
-            throw new NotImplementedException();
+            var songsByArtist = _uow.Songs.Find(s => s.ArtistId == artistId);
+            var mappedSongs = _mapper.Map<IEnumerable<SongDTOToGet>>(songsByArtist).ToList();
+            return mappedSongs;
         }
 
         public List<SongDTOToGet> GetAllSongsByPlaylist(Guid playlistId)
         {
-            throw new NotImplementedException();
+            var playlistToGetSongs = _uow.Playlists.Get(playlistId);
+            var songsByPlaylist = playlistToGetSongs.Songs;
+            var mappedSongs = _mapper.Map<IEnumerable<SongDTOToGet>>(songsByPlaylist).ToList();
+            return mappedSongs;
         }
 
         public List<SongDTOToGet> GetAllSongsByTime(DateTime time)
         {
-            throw new NotImplementedException();
+            var songsByTime = _uow.Songs.Find(s => s.Time == time);
+            var mappedSongs = _mapper.Map<IEnumerable<SongDTOToGet>>(songsByTime).ToList();
+            return mappedSongs;
         }
 
         public SongDTOToGet GetSongById(Guid id)
