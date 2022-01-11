@@ -27,6 +27,9 @@ namespace BusinessLayer.Services
 
             if (!isSongExist)
             {
+                var albumToAddTime = _uow.Albums.Get(songCreate.AlbumId);
+                albumToAddTime.Time.Add(songCreate.Time.TimeOfDay);
+                _uow.Albums.Update(albumToAddTime);
                 _uow.Songs.Create(mappedSong);
                 _uow.Save();
             }
@@ -107,7 +110,6 @@ namespace BusinessLayer.Services
             if (song != null)
             {
                 song.Genre = songUpdate.Genre;
-                song.Time = songUpdate.Time;
                 song.Title = songUpdate.Title;
                 _uow.Songs.Update(song);
                 _uow.Save();

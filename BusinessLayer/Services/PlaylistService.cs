@@ -30,6 +30,7 @@ namespace BusinessLayer.Services
             {
                 playlist.Songs.Add(song);
                 song.Playlists.Add(playlist);
+                playlist.Time.Add(song.Time.TimeOfDay);
                 _uow.Playlists.Update(playlist);
                 _uow.Songs.Update(song);
                 _uow.Save();
