@@ -65,12 +65,30 @@ namespace BusinessLayer.Services
 
         public SongDTOToGet GetSongById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var songFromDB = _uow.Songs.Get(id);
+                var mappedSong = _mapper.Map<SongDTOToGet>(songFromDB);
+                return mappedSong;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<SongDTOToGet> GetSongs()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var songsFromDB = _uow.Songs.GetAll();
+                var mappedSongs = _mapper.Map<IEnumerable<SongDTOToGet>>(songsFromDB).ToList();
+                return mappedSongs;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void UpdateSong(SongUpdateDTO songUpdate, Guid id)
