@@ -22,12 +22,28 @@ namespace BusinessLayer.Services
 
         public void CreateAlbum(AlbumCreateDTO albumCreate)
         {
-            throw new NotImplementedException();
+            var album = _mapper.Map<Album>(albumCreate);
+            var artistWhoCreate = _uow.Artists.Find(a => a.Id == albumCreate.AtristId).First();
+            var isAlbumFromArtist = artistWhoCreate.Albums.Any(a => a.Name == albumCreate.Name);
+
+            if (!isAlbumFromArtist)
+            {
+                _uow.Albums.Create(album);
+                artistWhoCreate.Albums.Add(album);
+                _uow.Artists.Update(artistWhoCreate);
+                _uow.Save();
+            }
         }
 
         public void DeleteAlbum(Guid id)
         {
-            throw new NotImplementedException();
+            var albumFromDB = _uow.Albums.Get(id);
+
+            if (albumFromDB != null)
+            {
+                _uow.Albums.Delete(id);
+                _uow.Save();
+            }
         }
 
         public AlbumDTOToGet GetAlbumById(Guid id)
@@ -52,7 +68,24 @@ namespace BusinessLayer.Services
 
         public void UpdateAlbum(AlbumUpdateDTO albumUpdate, Guid albumId)
         {
-            throw new NotImplementedException();
+            var albumFromDB = _uow.Albums.Get(albumId);
+
+            if (albumFromDB != null)
+            {
+                if (albumFromDB.Name != albumUpdate.Name)
+                {
+                    var artistWhoCreate = _uow.Artists.Find(a => a.Id == albumFromDB.AtristId).First();
+                    var isAlbumFromArtist = artistWhoCreate.Albums.Any(a => a.Name == albumUpdate.Name);
+
+                    if (!isAlbumFromArtist)
+                    {
+                        albumFromDB.Name = albumUpdate.Name;
+                    }
+                }
+
+                _uow.Albums.Update(albumFromDB);
+                _uow.Save();
+            }
         }
     }
 }
