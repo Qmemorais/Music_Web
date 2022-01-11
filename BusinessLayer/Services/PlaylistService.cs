@@ -61,17 +61,46 @@ namespace BusinessLayer.Services
 
         public List<PlaylistDTOToGet> GetAllPlaylistsBySong(Guid songId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var songToGetPlaylists = _uow.Songs.Get(songId);
+                var playlistsBySong = _uow.Playlists.Find(p=>p.Songs.Contains(songToGetPlaylists));
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDTOToGet>>(playlistsBySong).ToList();
+                return mappedPlaylists;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<PlaylistDTOToGet> GetAllPlaylistsByTime(DateTime time)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var playlistsByTime = _uow.Playlists.Find(p => p.Time == time);
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDTOToGet>>(playlistsByTime).ToList();
+                return mappedPlaylists;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<PlaylistDTOToGet> GetAllPlaylistsByUser(Guid userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var userToGetPlaylists = _uow.Users.Get(userId);
+                var playlistsByUser = _uow.Playlists.Find(p => p.Users.Contains(userToGetPlaylists));
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDTOToGet>>(playlistsByUser).ToList();
+                return mappedPlaylists;
+            }
+            catch (Exception)
+            {
+                return null; 
+            }
         }
 
         public PlaylistDTOToGet GetPlaylistById(Guid id)
@@ -90,7 +119,16 @@ namespace BusinessLayer.Services
 
         public List<PlaylistDTOToGet> GetPlaylists()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var playlists = _uow.Playlists.GetAll();
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistDTOToGet>>(playlists).ToList();
+                return mappedPlaylists;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate, Guid id)
