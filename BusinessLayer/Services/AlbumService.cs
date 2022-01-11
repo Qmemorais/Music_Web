@@ -48,22 +48,58 @@ namespace BusinessLayer.Services
 
         public AlbumDTOToGet GetAlbumById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var albumFromContext = _uow.Albums.Get(id);
+                var mappedAlbum = _mapper.Map<AlbumDTOToGet>(albumFromContext);
+                return mappedAlbum;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<AlbumDTOToGet> GetAlbums()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var albumsFromContext = _uow.Albums.GetAll();
+                var mappedAlbums = _mapper.Map<IEnumerable<AlbumDTOToGet>>(albumsFromContext).ToList();
+                return mappedAlbums;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<AlbumDTOToGet> GetAllAlbumsByArtist(Guid artistId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var albumsByArtistId = _uow.Albums.Find(a => a.AtristId == artistId);
+                var mappedAlbums = _mapper.Map<IEnumerable<AlbumDTOToGet>>(albumsByArtistId).ToList();
+                return mappedAlbums;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<AlbumDTOToGet> GetAllAlbumsByTime(DateTime time)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var albumsByTime = _uow.Albums.Find(a => a.Time == time);
+                var mappedAlbums = _mapper.Map<IEnumerable<AlbumDTOToGet>>(albumsByTime).ToList();
+                return mappedAlbums;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void UpdateAlbum(AlbumUpdateDTO albumUpdate, Guid albumId)
