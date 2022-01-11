@@ -19,5 +19,35 @@ namespace BusinessLayer.Services
             _mapper = mapper;
             _uow = uow;
         }
+
+        public void CreateArtist(ArtistCreateDTO artistCreate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteArtist(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ArtistDTO> GetAllArtistsByCountry(string country)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ArtistDTO GetArtistById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ArtistDTO> GetArtists()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateArtist(ArtistUpdateDTO artistUpdate, Guid artistId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
