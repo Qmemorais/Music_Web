@@ -22,12 +22,25 @@ namespace BusinessLayer.Services
 
         public void CreateSong(SongCreateDTO songCreate)
         {
-            throw new NotImplementedException();
+            var mappedSong = _mapper.Map<Song>(songCreate);
+            var isSongExist = _uow.Songs.Equals(mappedSong);
+
+            if (!isSongExist)
+            {
+                _uow.Songs.Create(mappedSong);
+                _uow.Save();
+            }
         }
 
         public void DeleteSong(Guid id)
         {
-            throw new NotImplementedException();
+            var song = _uow.Songs.Get(id);
+
+            if (song != null)
+            {
+                _uow.Songs.Delete(id);
+                _uow.Save();
+            }
         }
 
         public List<SongDTOToGet> GetAllSongsByAlbum(Guid AlbumId)
@@ -62,7 +75,16 @@ namespace BusinessLayer.Services
 
         public void UpdateSong(SongUpdateDTO songUpdate, Guid id)
         {
-            throw new NotImplementedException();
+            var song = _uow.Songs.Get(id);
+
+            if (song != null)
+            {
+                song.Genre = songUpdate.Genre;
+                song.Time = songUpdate.Time;
+                song.Title = songUpdate.Title;
+                _uow.Songs.Update(song);
+                _uow.Save();
+            }
         }
     }
 }
