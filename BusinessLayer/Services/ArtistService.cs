@@ -45,17 +45,44 @@ namespace BusinessLayer.Services
 
         public List<ArtistDTO> GetAllArtistsByCountry(string country)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var artistsByCountry = _uow.Artists.Find(a => a.Country == country);
+                var mappedArtists = _mapper.Map<IEnumerable<ArtistDTO>>(artistsByCountry).ToList();
+                return mappedArtists;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public ArtistDTO GetArtistById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var artistFromContext = _uow.Artists.Get(id);
+                var mappedArtist = _mapper.Map<ArtistDTO>(artistFromContext);
+                return mappedArtist;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public List<ArtistDTO> GetArtists()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var artistsFromContext = _uow.Artists.GetAll();
+                var mappedArtists = _mapper.Map<IEnumerable<ArtistDTO>>(artistsFromContext).ToList();
+                return mappedArtists;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void UpdateArtist(ArtistUpdateDTO artistUpdate, Guid artistId)
