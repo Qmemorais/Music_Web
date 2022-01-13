@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using DataLayer.Models;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Web_Music.Models
 {
     public class SongResponseModel
     {
-        public string Name { get; set; }
-        public string Time { get; set; }
-        public int ArtistId { get; set; }
-        public int AlbumId { get; set; }
-        public List<PlaylistUpdateRequestModel> Playlists { get; set; }
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string Genre { get; set; }
+        public DateTime Time { get; set; }
+        public Guid ArtistId { get; set; }
+        public Guid AlbumId { get; set; }
+        public List<PlaylistModel> Playlists { get; set; }
     }
 }

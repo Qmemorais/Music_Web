@@ -1,11 +1,14 @@
-﻿namespace Web_Music.Models
+﻿using System;
+
+namespace Web_Music.Models
 {
     public class SongCreateRequestModel
     {
-        public string Name { get; set; }
-        public string Time { get; set; }
-        public int ArtistId { get; set; }
-        public int AlbumId { get; set; }
+        public string Title { get; set; }
+        public string Genre { get; set; }
+        public DateTime Time { get; set; }
+        public Guid ArtistId { get; set; }
+        public Guid AlbumId { get; set; }
 
     }
 }
