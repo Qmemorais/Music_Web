@@ -13,10 +13,12 @@ namespace Web_Music.SourceMappingProfiles
             CreateMap<PlaylistCreateDTO, Playlist>();
             CreateMap<PlaylistUpdateDTO, Playlist>();
             CreateMap<PlaylistDTOToGet, Playlist>().ReverseMap();
+            CreateMap<PlaylistDTO, Playlist>().ReverseMap();
             //Controllers-Business
             CreateMap<PlaylistCreateRequestModel, PlaylistCreateDTO>();
             CreateMap<PlaylistUpdateRequestModel, PlaylistUpdateDTO>();
             CreateMap<PlaylistResponseModel, PlaylistDTOToGet>().ReverseMap();
+            CreateMap<PlaylistModel, PlaylistDTO>().ReverseMap();
         }
     }
 }
