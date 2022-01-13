@@ -10,9 +10,9 @@ namespace Web_Music.SourceMappingProfiles
         public SourceMappingSongProfile()
         {
             //Business-Data
-            CreateMap<SongCreateDto, Song>().ReverseMap();
-            CreateMap<SongUpdateDto, Song>().ReverseMap();
-            CreateMap<SongDto, Song>().ReverseMap();
+            CreateMap<SongCreateDTO, Song>();
+            CreateMap<SongUpdateDTO, Song>();
+            CreateMap<SongDTOToGet, Song>().ReverseMap();
             //Controllers-Business
             CreateMap<SongCreateRequestModel, SongCreateDto>().ReverseMap();
             CreateMap<SongUpdateRequestModel, SongUpdateDto>().ReverseMap();
