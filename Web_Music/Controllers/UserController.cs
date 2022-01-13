@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,11 +25,11 @@ namespace Web_Music.Controllers
 
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
-        public IActionResult GetUserById([FromRoute] int userId)
+        public IActionResult GetUserById([FromRoute] Guid userId)
         {
             try
             {
-                var user = _userService.GetUser(userId);
+                var user = _userService.GetUserById(userId);
                 if (user == null)
                     return NotFound();
 
@@ -49,7 +49,49 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var users = _userService.GetAllUsers();
+                var users = _userService.GetUsers();
+                if (users == null)
+                    return NotFound();
+
+                var mappedUsers = _mapper.Map<IEnumerable<UserResponseModel>>(users);
+
+                return Ok(mappedUsers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("{country}")]
+        [ProducesResponseType(typeof(IEnumerable<UserResponseModel>), StatusCodes.Status200OK)]
+        public IActionResult GetAllUsersByCountry([FromRoute] string country)
+        {
+            try
+            {
+                var users = _userService.GetUsersByCountry(country);
+
+                if (users == null)
+                    return NotFound();
+
+                var mappedUsers = _mapper.Map<IEnumerable<UserResponseModel>>(users);
+
+                return Ok(mappedUsers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("{age}")]
+        [ProducesResponseType(typeof(IEnumerable<UserResponseModel>), StatusCodes.Status200OK)]
+        public IActionResult GetAllUsersByAge([FromRoute] int age)
+        {
+            try
+            {
+                var users = _userService.GetUsersByAge(age);
+
                 if (users == null)
                     return NotFound();
 
@@ -71,7 +113,7 @@ namespace Web_Music.Controllers
                 if (requestModel == null)
                     return BadRequest();
 
-                var mappedUser = _mapper.Map<UserCreateDto>(requestModel);
+                var mappedUser = _mapper.Map<UserCreateDTO>(requestModel);
                 _userService.CreateUser(mappedUser);
 
                 return StatusCode((int)HttpStatusCode.Created);
@@ -83,11 +125,12 @@ namespace Web_Music.Controllers
         }
 
         [HttpDelete("{userId}")]
-        public IActionResult DeleteUser([FromRoute] int userId)
+        public IActionResult DeleteUser([FromRoute] Guid userId)
         {
             try
             {
-                var user = _userService.GetUser(userId);
+                var user = _userService.GetUserById(userId);
+
                 if(user == null)
                     return NotFound();
 
@@ -102,12 +145,12 @@ namespace Web_Music.Controllers
         }
 
         [HttpPut("{userId}")]
-        public IActionResult UpdateUser([FromRoute] int userId, [FromBody] UserUpdateRequestModel requestModel)
+        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] UserUpdateRequestModel requestModel)
         {
             try
             {
-                var mappedUserToUpdate = _mapper.Map<UserUpdateDto>(requestModel);
-                _userService.UpdateUser(userId, mappedUserToUpdate);
+                var mappedUserToUpdate = _mapper.Map<UserUpdateDTO>(requestModel);
+                _userService.UpdateUser(mappedUserToUpdate, userId);
 
                 return NoContent();
             }
