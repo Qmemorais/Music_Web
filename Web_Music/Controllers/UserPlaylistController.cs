@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,18 +27,19 @@ namespace Web_Music.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllPlaylistsByUser([FromRoute] int userId)
+        public IActionResult GetAllPlaylistsByUser([FromRoute] Guid userId)
         {
             try
             {
-                var getUser = _userService.GetUser(userId);
+                var getUser = _userService.GetUserById(userId);
+
                 if (getUser == null)
-                    return NotFound();
+                    return NotFound("NotFound User");
 
                 var allPlaylistsByUser = _playlistService.GetAllPlaylistsByUser(userId);
 
                 if (allPlaylistsByUser == null)
-                    return NotFound();
+                    return NotFound("NotFound Playlists");
 
                 var mappedPlaylistsByUser = _mapper.Map<IEnumerable<PlaylistResponseModel>>(allPlaylistsByUser);
 
@@ -51,19 +52,19 @@ namespace Web_Music.Controllers
         }
 
         [HttpPut("{playlistId}")]
-        public IActionResult AddPlaylistToUser([FromRoute] int userId, [FromRoute] int playlistId)
+        public IActionResult AddPlaylistToUser([FromRoute] Guid userId, [FromRoute] Guid playlistId)
         {
             try
             {
-                var user = _userService.GetUser(userId);
+                var user = _userService.GetUserById(userId);
 
                 if (user == null)
-                    return NotFound();
+                    return NotFound("NotFound User");
 
-                var playlist = _playlistService.GetPlaylist(playlistId);
+                var playlist = _playlistService.GetPlaylistById(playlistId);
 
                 if (playlist == null)
-                    return NotFound();
+                    return NotFound("NotFound Playlist");
 
                 _userService.AddPlaylistToUser(userId, playlistId);
 
@@ -77,22 +78,72 @@ namespace Web_Music.Controllers
 
         [HttpGet("{playlistId}")]
         [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllUsersByPlaylist([FromRoute] int playlistId)
+        public IActionResult GetAllUsersByPlaylist([FromRoute] Guid playlistId)
         {
             try
             {
-                var getPlaylist = _playlistService.GetPlaylist(playlistId);
+                var getPlaylist = _playlistService.GetPlaylistById(playlistId);
 
                 if (getPlaylist == null)
-                    return NotFound();
+                    return NotFound("NotFound Playlist");
 
-                var allUsersByPlaylist = _userService.GetAllUsersByPlaylist(playlistId);
+                var allUsersByPlaylist = _userService.GetUsersByPlaylist(playlistId);
 
                 if (allUsersByPlaylist == null)
-                    return NotFound();
+                    return NotFound("NotFound Users");
 
                 var mappedUsersByPlaylist = _mapper.Map<IEnumerable<UserResponseModel>>(allUsersByPlaylist);
                 return Ok(mappedUsersByPlaylist);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpDelete("{playlistId}")]
+        public IActionResult DeletePlaylistAsOwner([FromRoute] Guid userId, [FromRoute] Guid playlistId)
+        {
+            try
+            {
+                var user = _userService.GetUserById(userId);
+
+                if (user == null)
+                    return NotFound("NotFound User");
+
+                var Playlist = _playlistService.GetPlaylistById(playlistId);
+
+                if (Playlist == null)
+                    return NotFound("NotFound Playlist");
+
+                _playlistService.DeletePlaylistAsOwner(userId,playlistId);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpDelete("{playlistId}")]
+        public IActionResult DeletePlaylistFromUserList([FromRoute] Guid userId, [FromRoute] Guid playlistId)
+        {
+            try
+            {
+                var user = _userService.GetUserById(userId);
+
+                if (user == null)
+                    return NotFound("NotFound User");
+
+                var Playlist = _playlistService.GetPlaylistById(playlistId);
+
+                if (Playlist == null)
+                    return NotFound("NotFound Playlist");
+
+                _userService.RemovePlaylistFromListOfUser(userId, playlistId);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
