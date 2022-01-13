@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BusinessLayer.Models
+namespace Web_Music.Models
 {
-    public class SongDTO
+    public class SongModel
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
