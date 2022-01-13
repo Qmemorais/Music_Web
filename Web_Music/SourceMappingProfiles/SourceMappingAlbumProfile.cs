@@ -14,9 +14,9 @@ namespace Web_Music.SourceMappingProfiles
             CreateMap<AlbumUpdateDTO, Album>();
             CreateMap<AlbumDTOToGet, Album>().ReverseMap();
             //Controllers-Business
-            CreateMap<AlbumCreateRequestModel, AlbumCreateDto>().ReverseMap();
-            CreateMap<AlbumUpdateRequestModel, AlbumUpdateDto>().ReverseMap();
-            CreateMap<AlbumResponseModel, AlbumDto>().ReverseMap();
+            CreateMap<AlbumCreateRequestModel, AlbumCreateDTO>();
+            CreateMap<AlbumUpdateRequestModel, AlbumUpdateDTO>();
+            CreateMap<AlbumResponseModel, AlbumDTOToGet>().ReverseMap();
         }
     }
 }
