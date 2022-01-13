@@ -49,17 +49,6 @@ namespace BusinessLayer.Services
             }
         }
 
-        public void DeletePlaylist(Guid id)
-        {
-            var playlist = _uow.Playlists.Get(id);
-
-            if (playlist != null)
-            {
-                _uow.Playlists.Delete(id);
-                _uow.Save();
-            }
-        }
-
         public List<PlaylistDTOToGet> GetAllPlaylistsBySong(Guid songId)
         {
             try
@@ -144,6 +133,17 @@ namespace BusinessLayer.Services
                     if (anyPlaylistName == null)
                         playlist.Name = playlistUpdate.Name;
                 }
+        }
+
+        public void DeletePlaylistAsOwner(Guid userId, Guid playlistId)
+        {
+            var playlistToDelete = _uow.Playlists.Get(playlistId);
+
+            if (playlistToDelete.OwnerUserId == userId)
+            {
+                _uow.Playlists.Delete(playlistId);
+                _uow.Save();
+            }
         }
     }
 }

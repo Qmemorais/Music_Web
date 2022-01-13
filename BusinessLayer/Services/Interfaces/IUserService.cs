@@ -15,6 +15,7 @@ namespace BusinessLayer.Services.Interfaces
         public List<UserDTOToGet> GetUsersByPlaylist(Guid playlistId);
         public List<UserDTOToGet> GetUsersByCountry(string countryName);
         public List<UserDTOToGet> GetUsersByAge(int age);
+        public void RemovePlaylistFromListOfUser(Guid userId, Guid playlistId);
 
     }
 }

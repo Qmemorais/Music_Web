@@ -8,7 +8,7 @@ namespace BusinessLayer.Services.Interfaces
     {
         public void CreatePlaylist(PlaylistCreateDTO playlistCreate);
         public void UpdatePlaylist(PlaylistUpdateDTO playlistUpdate, Guid id);
-        public void DeletePlaylist(Guid id);
+        public void DeletePlaylistAsOwner(Guid userId, Guid playlistId);
         public List<PlaylistDTOToGet> GetPlaylists();
         public PlaylistDTOToGet GetPlaylistById(Guid id);
         public void AddSongToPlaylist(Guid playlistId, Guid songId);

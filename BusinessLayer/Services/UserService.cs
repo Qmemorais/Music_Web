@@ -124,6 +124,21 @@ namespace BusinessLayer.Services
             }
         }
 
+        public void RemovePlaylistFromListOfUser(Guid userId, Guid playlistId)
+        {
+            var user = _uow.Users.Get(userId);
+            var playlistToDelete = _uow.Playlists.Get(playlistId);
+            var isPlaylistExist = user.Playlists.Contains(playlistToDelete);
+
+            if(isPlaylistExist)
+            {
+                user.Playlists.Remove(playlistToDelete);
+                _uow.Users.Update(user);
+                _uow.Playlists.Update(playlistToDelete);
+                _uow.Save();
+            }
+        }
+
         public void UpdateUser(UserUpdateDTO userUpdate, Guid id)
         {
             var user = _uow.Users.Get(id);
