@@ -2,9 +2,11 @@
 
 namespace Web_Music.Models
 {
-    public class PlaylistCreateRequestModel
+    public class PlaylistModel
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public Guid UserOwnerId { get; set; }
+        public DateTime TimeToPlay { get; set; }
     }
 }
