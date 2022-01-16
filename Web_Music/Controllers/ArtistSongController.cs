@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Web_Music.Models;
 using AutoMapper;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Web_Music.Controllers
@@ -26,17 +26,19 @@ namespace Web_Music.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllSongsByArtist([FromRoute] int artistId)
+        public IActionResult GetAllSongsByArtist([FromRoute] Guid artistId)
         {
             try
             {
-                var artist = _artistService.GetArtist(artistId);
+                var artist = _artistService.GetArtistById(artistId);
+
                 if(artist == null)
-                    return NotFound();
+                    return NotFound("NotFound Artist");
 
                 var songs = _songService.GetAllSongsByArtist(artistId);
+
                 if (songs == null)
-                    return NotFound();
+                    return NotFound("NotFound Song");
 
                 var mappedSongs = _mapper.Map<IEnumerable<SongResponseModel>>(songs);
 
