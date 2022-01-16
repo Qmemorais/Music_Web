@@ -16,5 +16,6 @@ namespace BusinessLayer.Services.Interfaces
         public List<PlaylistDTOToGet> GetAllPlaylistsBySong(Guid songId);
         //take all playlists where time is more then we asked
         public List<PlaylistDTOToGet> GetAllPlaylistsByTime(DateTime time);
+        public void RemoveSongFromPlaylist(Guid playlistId, Guid songId);
     }
 }
