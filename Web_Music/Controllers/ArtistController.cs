@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,11 +24,12 @@ namespace Web_Music.Controllers
 
         [HttpGet("{artistId}")]
         [ProducesResponseType(typeof(ArtistResponseModel), StatusCodes.Status200OK)]
-        public IActionResult GetArtistById([FromRoute] int artistId)
+        public IActionResult GetArtistById([FromRoute] Guid artistId)
         {
             try
             {
-                var artist = _artistService.GetArtist(artistId);
+                var artist = _artistService.GetArtistById(artistId);
+
                 if (artist == null)
                     return NotFound();
 
@@ -47,7 +48,8 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var artists = _artistService.GetAllArtists();
+                var artists = _artistService.GetArtists();
+
                 if (artists == null)
                     return NotFound();
 
@@ -69,7 +71,7 @@ namespace Web_Music.Controllers
                 if (requestModel == null)
                     return BadRequest();
 
-                var mappedArtist = _mapper.Map<ArtistCreateDto>(requestModel);
+                var mappedArtist = _mapper.Map<ArtistCreateDTO>(requestModel);
                 _artistService.CreateArtist(mappedArtist);
 
                 return StatusCode((int)HttpStatusCode.Created);
@@ -81,11 +83,12 @@ namespace Web_Music.Controllers
         }
 
         [HttpDelete("{artistId}")]
-        public IActionResult DeleteArtist([FromRoute] int artistId)
+        public IActionResult DeleteArtist([FromRoute] Guid artistId)
         {
             try
             {
-                var artist = _artistService.GetArtist(artistId);
+                var artist = _artistService.GetArtistById(artistId);
+
                 if (artist == null)
                     return NotFound();
 
@@ -99,13 +102,33 @@ namespace Web_Music.Controllers
         }
 
         [HttpPut("{artistId}")]
-        public IActionResult UpdateArtist([FromRoute] int artistId, [FromBody] ArtistUpdateRequestModel requestModel)
+        public IActionResult UpdateArtist([FromRoute] Guid artistId, [FromBody] ArtistUpdateRequestModel requestModel)
         {
             try
             {
-                var mappedArtistToUpdate = _mapper.Map<ArtistUpdateDto>(requestModel);
-                _artistService.UpdateArtist(artistId, mappedArtistToUpdate);
+                var mappedArtistToUpdate = _mapper.Map<ArtistUpdateDTO>(requestModel);
+                _artistService.UpdateArtist(mappedArtistToUpdate, artistId);
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("{country}")]
+        [ProducesResponseType(typeof(ArtistResponseModel), StatusCodes.Status200OK)]
+        public IActionResult GetArtistByCountry([FromRoute] string country)
+        {
+            try
+            {
+                var artist = _artistService.GetAllArtistsByCountry(country);
+
+                if (artist == null)
+                    return NotFound();
+
+                var mappedArtist = _mapper.Map<ArtistResponseModel>(artist);
+                return Ok(mappedArtist);
             }
             catch (Exception ex)
             {
