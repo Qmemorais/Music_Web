@@ -145,5 +145,20 @@ namespace BusinessLayer.Services
                 _uow.Save();
             }
         }
+
+        public void RemoveSongFromPlaylist(Guid playlistId, Guid songId)
+        {
+            var playlistToRemoveSong = _uow.Playlists.Get(playlistId);
+            var songToDelete = _uow.Songs.Get(songId);
+            var isSongExist = playlistToRemoveSong.Songs.Contains(songToDelete);
+
+            if (isSongExist)
+            {
+                playlistToRemoveSong.Songs.Remove(songToDelete);
+                _uow.Playlists.Update(playlistToRemoveSong);
+                _uow.Songs.Update(songToDelete);
+                _uow.Save();
+            }
+        }
     }
 }
