@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,15 +26,17 @@ namespace Web_Music.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllSongsByPlaylist([FromRoute] int playlistId)
+        public IActionResult GetAllSongsByPlaylist([FromRoute] Guid playlistId)
         {
             try
             {
-                var getPlaylist = _playlistService.GetPlaylist(playlistId);
+                var getPlaylist = _playlistService.GetPlaylistById(playlistId);
+
                 if (getPlaylist == null)
                     return NotFound();
 
                 var allSongsByPlaylist = _songService.GetAllSongsByPlaylist(playlistId);
+
                 if (allSongsByPlaylist == null)
                     return NotFound();
 
@@ -49,15 +51,17 @@ namespace Web_Music.Controllers
 
         [HttpGet("{songId}")]
         [ProducesResponseType(typeof(IEnumerable<SongResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllPlaylistsBySong([FromRoute] int songId)
+        public IActionResult GetAllPlaylistsBySong([FromRoute] Guid songId)
         {
             try
             {
                 var getSong = _songService.GetSongById(songId);
+
                 if (getSong == null)
                     return NotFound();
 
                 var allPlaylistsBySong = _playlistService.GetAllPlaylistsBySong(songId);
+
                 if (allPlaylistsBySong == null)
                     return NotFound();
 
@@ -71,7 +75,7 @@ namespace Web_Music.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddSongToPlaylist(int playlistId, int songId)
+        public IActionResult AddSongToPlaylist(Guid playlistId, Guid songId)
         {
             try
             {
@@ -80,7 +84,7 @@ namespace Web_Music.Controllers
                 if (song == null)
                     return NotFound();
 
-                var playlist = _playlistService.GetPlaylist(playlistId);
+                var playlist = _playlistService.GetPlaylistById(playlistId);
 
                 if (playlist == null)
                     return NotFound();
@@ -88,6 +92,31 @@ namespace Web_Music.Controllers
                 _playlistService.AddSongToPlaylist(playlistId,songId);
 
                 return StatusCode((int)HttpStatusCode.Created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpDelete("{songId}")]
+        public IActionResult DeletePlaylistFromUserList([FromRoute] Guid playlistId, [FromRoute] Guid songId)
+        {
+            try
+            {
+                var playlist = _playlistService.GetPlaylistById(playlistId);
+
+                if (playlist == null)
+                    return NotFound("NotFound Playlist");
+
+                var songToDelete = _songService.GetSongById(songId);
+
+                if (songToDelete == null)
+                    return NotFound("NotFound Song");
+
+                _playlistService.RemoveSongFromPlaylist(playlistId, songId);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
