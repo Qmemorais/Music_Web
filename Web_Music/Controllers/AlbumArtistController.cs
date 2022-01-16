@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,15 +26,17 @@ namespace Web_Music.Controllers
 
         [HttpGet("{albumId}")]
         [ProducesResponseType(typeof(IEnumerable<AlbumResponseModel>), StatusCodes.Status200OK)]
-        public IActionResult GetAllAlbumsByArtist([FromRoute] int artistId)
+        public IActionResult GetAllAlbumsByArtist([FromRoute] Guid artistId)
         {
             try
             {
-                var artist = _artistService.GetArtist(artistId);
+                var artist = _artistService.GetArtistById(artistId);
+
                 if (artist == null)
                     return NotFound();
 
                 var albums = _albumService.GetAllAlbumsByArtist(artistId);
+
                 if (albums == null)
                     return NotFound();
 
