@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,11 +25,12 @@ namespace Web_Music.Controllers
 
         [HttpGet("{playlistId}")]
         [ProducesResponseType(typeof(PlaylistResponseModel), StatusCodes.Status200OK)]
-        public IActionResult GetPlaylistById([FromRoute] int playlistId)
+        public IActionResult GetPlaylistById([FromRoute] Guid playlistId)
         {
             try
             {
-                var playlist = _playlistService.GetPlaylist(playlistId);
+                var playlist = _playlistService.GetPlaylistById(playlistId);
+
                 if (playlist == null)
                     return NotFound();
 
@@ -48,7 +49,29 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var playlists = _playlistService.GetAllPlaylists();
+                var playlists = _playlistService.GetPlaylists();
+
+                if (playlists == null)
+                    return NotFound();
+
+                var mappedPlaylists = _mapper.Map<IEnumerable<PlaylistResponseModel>>(playlists);
+
+                return Ok(mappedPlaylists);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("{time}")]
+        [ProducesResponseType(typeof(IEnumerable<PlaylistResponseModel>), StatusCodes.Status200OK)]
+        public IActionResult GetAllPlaylist([FromRoute] DateTime time)
+        {
+            try
+            {
+                var playlists = _playlistService.GetAllPlaylistsByTime(time);
+
                 if (playlists == null)
                     return NotFound();
 
@@ -70,7 +93,7 @@ namespace Web_Music.Controllers
                 if (requestModel == null)
                     return BadRequest();
 
-                var mappedPlaylist = _mapper.Map<PlaylistCreateDto>(requestModel);
+                var mappedPlaylist = _mapper.Map<PlaylistCreateDTO>(requestModel);
                 _playlistService.CreatePlaylist(mappedPlaylist);
 
                 return StatusCode((int)HttpStatusCode.Created);
@@ -81,31 +104,13 @@ namespace Web_Music.Controllers
             }
         }
 
-        [HttpDelete("{playlistId}")]
-        public IActionResult DeletePlaylist([FromRoute] int playlistId)
-        {
-            try
-            {
-                var playlist = _playlistService.GetPlaylist(playlistId);
-                if (playlist == null)
-                    return NotFound();
-
-                _playlistService.DeletePlaylist(playlistId);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex);
-            }
-        }
-
         [HttpPut("{playlistId}")]
-        public IActionResult UpdatePlaylist([FromRoute] int playlistId, [FromBody] PlaylistUpdateRequestModel requestModel)
+        public IActionResult UpdatePlaylist([FromRoute] Guid playlistId, [FromBody] PlaylistUpdateRequestModel requestModel)
         {
             try
             {
-                var mappedPlaylistToUpdate = _mapper.Map<PlaylistUpdateDto>(requestModel);
-                _playlistService.UpdatePlaylist(playlistId, mappedPlaylistToUpdate);
+                var mappedPlaylistToUpdate = _mapper.Map<PlaylistUpdateDTO>(requestModel);
+                _playlistService.UpdatePlaylist(mappedPlaylistToUpdate, playlistId);
                 return NoContent();
             }
             catch (Exception ex)
