@@ -126,7 +126,7 @@ namespace Web_Music.Controllers
             }
         }
 
-        [HttpDelete("{playlistId}")]
+        [HttpDelete]
         public IActionResult DeletePlaylistFromUserList([FromRoute] Guid userId, [FromRoute] Guid playlistId)
         {
             try

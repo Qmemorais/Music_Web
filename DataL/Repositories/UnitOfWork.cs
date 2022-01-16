@@ -4,7 +4,7 @@ using DataLayer.Models;
 
 namespace DataLayer.Repositories
 {
-    class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly MusicContext _db;
         private UserRepository User;

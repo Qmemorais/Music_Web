@@ -1,6 +1,8 @@
 using BusinessLayer.Services;
 using BusinessLayer.Services.Interfaces;
 using DataLayer.Context;
+using DataLayer.Interfaces;
+using DataLayer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,7 @@ namespace Web_Music
             //add automapper to protect models
             services.AddAutoMapper(typeof(Startup).Assembly);
             //add services to work with models
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
             services.AddScoped<ISongService, SongService>();
