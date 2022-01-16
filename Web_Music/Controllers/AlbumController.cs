@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLayer.Models;
-using BusinessLayer.Services.Interface;
+using BusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,11 +24,12 @@ namespace Web_Music.Controllers
 
         [HttpGet("{albumId}")]
         [ProducesResponseType(typeof(AlbumResponseModel), StatusCodes.Status200OK)]
-        public IActionResult GetAlbumById([FromRoute] int albumId)
+        public IActionResult GetAlbumById([FromRoute] Guid albumId)
         {
             try
             {
-                var album = _albumService.GetAlbum(albumId);
+                var album = _albumService.GetAlbumById(albumId);
+
                 if (album == null)
                     return NotFound();
 
@@ -47,7 +48,8 @@ namespace Web_Music.Controllers
         {
             try
             {
-                var albums = _albumService.GetAllAlbums();
+                var albums = _albumService.GetAlbums();
+
                 if (albums == null)
                     return NotFound();
 
@@ -69,7 +71,7 @@ namespace Web_Music.Controllers
                 if (requestModel == null)
                     return BadRequest();
 
-                var mappedAlbum = _mapper.Map<AlbumCreateDto>(requestModel);
+                var mappedAlbum = _mapper.Map<AlbumCreateDTO>(requestModel);
                 _albumService.CreateAlbum(mappedAlbum);
 
                 return StatusCode((int)HttpStatusCode.Created);
@@ -81,11 +83,12 @@ namespace Web_Music.Controllers
         }
 
         [HttpDelete("{albumId}")]
-        public IActionResult DeleteAlbum([FromRoute] int albumId)
+        public IActionResult DeleteAlbum([FromRoute] Guid albumId)
         {
             try
             {
-                var album = _albumService.GetAlbum(albumId);
+                var album = _albumService.GetAlbumById(albumId);
+
                 if (album == null)
                     return NotFound();
 
@@ -99,13 +102,33 @@ namespace Web_Music.Controllers
         }
 
         [HttpPut("{albumId}")]
-        public IActionResult UpdateAlbum([FromRoute] int albumId, [FromBody] AlbumUpdateRequestModel requestModel)
+        public IActionResult UpdateAlbum([FromRoute] Guid albumId, [FromBody] AlbumUpdateRequestModel requestModel)
         {
             try
             {
-                var mappedAlbumToUpdate = _mapper.Map<AlbumUpdateDto>(requestModel);
-                _albumService.UpdateAlbum(albumId, mappedAlbumToUpdate);
+                var mappedAlbumToUpdate = _mapper.Map<AlbumUpdateDTO>(requestModel);
+                _albumService.UpdateAlbum(mappedAlbumToUpdate, albumId);
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpGet("{time}")]
+        [ProducesResponseType(typeof(AlbumResponseModel), StatusCodes.Status200OK)]
+        public IActionResult GetAlbumsByTime([FromRoute] DateTime time)
+        {
+            try
+            {
+                var album = _albumService.GetAllAlbumsByTime(time);
+
+                if (album == null)
+                    return NotFound();
+
+                var mappedAlbum = _mapper.Map<AlbumResponseModel>(album);
+                return Ok(mappedAlbum);
             }
             catch (Exception ex)
             {
